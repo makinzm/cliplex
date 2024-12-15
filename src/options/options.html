@@ -4,11 +4,65 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>単語一覧</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ccc;
+      word-wrap: break-word;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    #pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .pagination-button {
+      margin: 0 5px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .pagination-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    #linkLegend {
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
   <h1>保存した単語一覧</h1>
 
-  <!-- 既存のフィルタUI -->
+  <!-- リンク記号の説明 -->
+  <div id="linkLegend">
+    <p>
+      📕: 辞書系 (Oxford, Weblio, Your Dictionary) |
+      👂: 動画系 (Youglish, Play Phrase) |
+      🖊: その他 (Hyper Collection)
+    </p>
+  </div>
+
+  <!-- フィルタ -->
   <div>
     <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
     <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
@@ -25,7 +79,7 @@
     </label>
   </div>
 
-  <!-- ドメインブロック設定UI -->
+  <!-- ドメインブロック -->
   <h2>ドメインブロック設定</h2>
   <div>
     <input type="text" id="excludedDomainInput" placeholder="example.com" />
@@ -33,22 +87,27 @@
   </div>
   <ul id="excludedDomainList"></ul>
 
+  <!-- 単語一覧 -->
   <h2>単語一覧</h2>
   <table id="wordsTable" border="1" style="border-collapse: collapse;">
     <thead>
       <tr>
         <th>Key</th>
-        <th>Youglish</th>
-        <th>Oxford</th>
-        <th>例文 (箇条書き)</th>
+        <th>📕</th>
+        <th>👂</th>
+        <th>🖊</th>
+        <th>例文</th>
         <th>メモ</th>
         <th>追加日</th>
-        <th>優先度(1-5)</th>
+        <th>優先度</th>
         <th>操作</th>
       </tr>
     </thead>
     <tbody id="wordsTableBody"></tbody>
   </table>
+
+  <!-- ページネーション -->
+  <div id="pagination"></div>
 
   <script type="module" src="options.js"></script>
 </body>

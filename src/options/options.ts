@@ -17,27 +17,39 @@ const tableBody = document.getElementById('wordsTableBody') as HTMLTableSectionE
 let currentData: WordEntry[] = [];
 
 async function loadData(filter: FilterOptions = {}) {
-  console.log('Calling db.getAll() from options page...');
   let data = await db.getAll();
-  console.log('Data loaded:', data);
-  // 日付フィルタ
+
+  // フィルタリング
   if (filter.from) {
     data = data.filter(d => new Date(d.addedDate) >= filter.from!);
   }
   if (filter.to) {
     data = data.filter(d => new Date(d.addedDate) <= filter.to!);
   }
-  // ソート
-  data = data.sort((a, b) => {
-    // デフォルトは追加日順(降順とするなら以下を変更)
-    const dateCmp = new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime();
-    return dateCmp;
-  });
 
+  // ソート（フィルタの優先度ソート設定を適用）
   if (filter.prioritySort) {
-    data = data.sort((a, b) => {
-      if (filter.prioritySort === 'asc') return a.priority - b.priority;
-      else return b.priority - a.priority;
+    data.sort((a, b) => {
+      if (filter.prioritySort === 'asc') {
+        if (a.priority === b.priority) {
+          return new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime();
+        }
+        return a.priority - b.priority; // 優先度昇順
+      } else if (filter.prioritySort === 'desc') {
+        if (a.priority === b.priority) {
+          return new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime();
+        }
+        return b.priority - a.priority; // 優先度降順
+      }
+      return 0;
+    });
+  } else {
+    // デフォルトソート: 優先度降順、追加日降順
+    data.sort((a, b) => {
+      if (a.priority === b.priority) {
+        return new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime();
+      }
+      return b.priority - a.priority;
     });
   }
 
@@ -45,19 +57,81 @@ async function loadData(filter: FilterOptions = {}) {
   renderTable();
 }
 
+let currentPage = 1;
+const rowsPerPage = 10; // 1ページあたりの表示数
+const paginationContainer = document.getElementById('pagination') as HTMLDivElement;
+
+function renderPagination() {
+  paginationContainer.innerHTML = '';
+  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+
+  // 前へボタン
+  const prevButton = document.createElement('button');
+  prevButton.textContent = '前へ';
+  prevButton.className = 'pagination-button';
+  prevButton.disabled = currentPage === 1;
+  prevButton.addEventListener('click', () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderTable();
+      renderPagination();
+    }
+  });
+  paginationContainer.appendChild(prevButton);
+
+  // 次へボタン
+  const nextButton = document.createElement('button');
+  nextButton.textContent = '次へ';
+  nextButton.className = 'pagination-button';
+  nextButton.disabled = currentPage === totalPages;
+  nextButton.addEventListener('click', () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderTable();
+      renderPagination();
+    }
+  });
+  paginationContainer.appendChild(nextButton);
+}
+
 function renderTable() {
   tableBody.innerHTML = '';
-  for (const entry of currentData) {
+  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = currentData.slice(start, end);
+
+  for (const entry of pageData) {
     const tr = document.createElement('tr');
+
+    // リンク
     const youglishLink = `https://youglish.com/pronounce/${encodeURIComponent(entry.key)}/english`;
+    const playPhraseLink = `https://playphrase.me/#/search?q=${encodeURIComponent(entry.key)}`;
     const oxfordLink = `https://www.oxfordlearnersdictionaries.com/definition/english/${encodeURIComponent(entry.key)}`;
+    const weblioLink = `https://ejje.weblio.jp/content/${encodeURIComponent(entry.key)}`;
+    const yourDictLink = `https://www.yourdictionary.com/${encodeURIComponent(entry.key)}`;
+    const hyperLink = `https://hypcol.marutank.net/?q=${encodeURIComponent(entry.key)}`;
 
     tr.innerHTML = `
       <td>${entry.key}</td>
-      <td><a href="${youglishLink}" target="_blank">Youglish</a></td>
-      <td><a href="${oxfordLink}" target="_blank">Oxford</a></td>
       <td>
-        <ul>${entry.examples.map(ex => `<li>${ex}</li>`).join('')}</ul>
+        <a href="${oxfordLink}" target="_blank">Oxford</a>,
+        <a href="${weblioLink}" target="_blank">Weblio</a>,
+        <a href="${yourDictLink}" target="_blank">YourDict</a>
+      </td>
+      <td>
+        <a href="${youglishLink}" target="_blank">Youglish</a>,
+        <a href="${playPhraseLink}" target="_blank">PlayPhrase</a>
+      </td>
+      <td>
+        <a href="${hyperLink}" target="_blank">Hyper</a>
+      </td>
+      <td>
+        <ul>
+          ${entry.examples.map((ex, idx) => `
+            <li>${ex} <button class="delete-example" data-index="${idx}">削除</button></li>
+          `).join('')}
+        </ul>
         <button class="add-example">追加</button>
       </td>
       <td>
@@ -85,6 +159,16 @@ function renderTable() {
       }
     });
 
+    // 例文削除ボタン
+    const deleteButtons = tr.querySelectorAll('.delete-example') as NodeListOf<HTMLButtonElement>;
+    deleteButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const index = Number(btn.getAttribute('data-index'));
+        entry.examples.splice(index, 1); // 削除
+        renderTable();
+      });
+    });
+
     // 保存ボタン
     const saveBtn = tr.querySelector('.save-changes') as HTMLButtonElement;
     saveBtn.addEventListener('click', async () => {
@@ -105,6 +189,8 @@ function renderTable() {
 
     tableBody.appendChild(tr);
   }
+
+  renderPagination();
 }
 
 filterButton.addEventListener('click', () => {
