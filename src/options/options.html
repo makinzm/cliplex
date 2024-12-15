@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>単語一覧</title>
+</head>
+<body>
+  <h1>保存した単語一覧</h1>
+
+  <div>
+    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
+    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
+    <button id="filterButton">フィルタ</button>
+  </div>
+
+  <div>
+    <label>優先度ソート:
+      <select id="prioritySort">
+        <option value="">なし</option>
+        <option value="asc">昇順</option>
+        <option value="desc">降順</option>
+      </select>
+    </label>
+  </div>
+
+  <table id="wordsTable" border="1" style="border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th>Key</th>
+        <th>Youglish</th>
+        <th>Oxford</th>
+        <th>例文 (箇条書き)</th>
+        <th>メモ</th>
+        <th>追加日</th>
+        <th>優先度(1-5)</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="wordsTableBody"></tbody>
+  </table>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
+

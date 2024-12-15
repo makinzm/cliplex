@@ -1,6 +1,13 @@
 # cliplex
 
 
+How to set up a Chrome extension for clipping text from a webpage.
+```shell
+npm run build
+```
+
+Then, load the extension from the `dist` directory in Chrome.
+
 # Reference
 
 [Extensions / Get started  |  Chrome for Developers](https://developer.chrome.com/docs/extensions/get-started)
