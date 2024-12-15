@@ -1,12 +1,12 @@
 // chrome.storage.localを使用するデータベースクラス
 export class LocalDatabase {
-  private STORAGE_KEY = 'word_entries';
-  private EXCLUDED_DOMAIN_KEY = 'excluded_domains';
+  private STORAGE_KEY = "word_entries";
+  private EXCLUDED_DOMAIN_KEY = "excluded_domains";
 
   public async getAll(): Promise<WordEntry[]> {
-    console.log('Getting all entries from storage...');
+    console.log("Getting all entries from storage...");
     const result = await chrome.storage.local.get(this.STORAGE_KEY);
-    console.log('All entries:', result);
+    console.log("All entries:", result);
     return result[this.STORAGE_KEY] || [];
   }
 
@@ -47,4 +47,3 @@ export class LocalDatabase {
     await chrome.storage.local.set({ [this.EXCLUDED_DOMAIN_KEY]: newAll });
   }
 }
-
