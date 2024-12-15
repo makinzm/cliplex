@@ -110,21 +110,28 @@ function renderTable() {
     const oxfordLink = `https://www.oxfordlearnersdictionaries.com/definition/english/${encodeURIComponent(entry.key)}`;
     const weblioLink = `https://ejje.weblio.jp/content/${encodeURIComponent(entry.key)}`;
     const yourDictLink = `https://www.yourdictionary.com/${encodeURIComponent(entry.key)}`;
-    const hyperLink = `https://hypcol.marutank.net/?q=${encodeURIComponent(entry.key)}`;
+    const hyperLink = `https://hypcol.marutank.net/?q=${encodeURIComponent(entry.key)}&d=f`;
 
     tr.innerHTML = `
       <td>${entry.key}</td>
-      <td>
-        <a href="${oxfordLink}" target="_blank">Oxford</a>,
-        <a href="${weblioLink}" target="_blank">Weblio</a>,
-        <a href="${yourDictLink}" target="_blank">YourDict</a>
+      <td class="link-cell">
+        <ul>
+          <li><a href="${oxfordLink}" target="_blank">Ox.</a></li>
+          <li><a href="${weblioLink}" target="_blank">We.</a></li>
+          <li><a href="${yourDictLink}" target="_blank">Y.D.</a></li>
+        </ul>
       </td>
-      <td>
-        <a href="${youglishLink}" target="_blank">Youglish</a>,
-        <a href="${playPhraseLink}" target="_blank">PlayPhrase</a>
+      <td class="link-cell">
+        <ul>
+          <li><a href="${youglishLink}" target="_blank">Youglish</a></li>
+          <li><a href="${playPhraseLink}" target="_blank">P.P.</a></li>
+        </ul>
       </td>
-      <td>
-        <a href="${hyperLink}" target="_blank">Hyper</a>
+      <td class="link-cell">
+        <ul>
+          <li><a href="${yourDictLink}" target="_blank">Y.D.</a></li>
+          <li><a href="${hyperLink}" target="_blank">H.D.</a></li>
+        </ul>
       </td>
       <td>
         <ul>
