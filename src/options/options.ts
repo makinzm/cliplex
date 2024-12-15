@@ -14,12 +14,19 @@ const filterButton = document.getElementById('filterButton') as HTMLButtonElemen
 const prioritySortEl = document.getElementById('prioritySort') as HTMLSelectElement;
 const tableBody = document.getElementById('wordsTableBody') as HTMLTableSectionElement;
 
+// 追加: 除外パターン関連要素
+const excludePatternInput = document.getElementById('excludePatternInput') as HTMLInputElement;
+const addPatternButton = document.getElementById('addPatternButton') as HTMLButtonElement;
+const excludePatternsList = document.getElementById('excludePatternsList') as HTMLUListElement;
+
 let currentData: WordEntry[] = [];
+let excludePatterns: string[] = [];
 
 async function loadData(filter: FilterOptions = {}) {
   console.log('Calling db.getAll() from options page...');
   let data = await db.getAll();
-  console.log('Data loaded:', data);
+  console.log('Loaded data in options:', data);
+
   // 日付フィルタ
   if (filter.from) {
     data = data.filter(d => new Date(d.addedDate) >= filter.from!);
@@ -27,9 +34,9 @@ async function loadData(filter: FilterOptions = {}) {
   if (filter.to) {
     data = data.filter(d => new Date(d.addedDate) <= filter.to!);
   }
+
   // ソート
   data = data.sort((a, b) => {
-    // デフォルトは追加日順(降順とするなら以下を変更)
     const dateCmp = new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime();
     return dateCmp;
   });
@@ -75,7 +82,7 @@ function renderTable() {
       </td>
     `;
 
-    // 追加例文ボタン
+    // イベントリスナー(追加例文、保存、削除)は元通り
     const addExBtn = tr.querySelector('.add-example') as HTMLButtonElement;
     addExBtn.addEventListener('click', () => {
       const newEx = prompt('新しい例文を入力してください:');
@@ -85,7 +92,6 @@ function renderTable() {
       }
     });
 
-    // 保存ボタン
     const saveBtn = tr.querySelector('.save-changes') as HTMLButtonElement;
     saveBtn.addEventListener('click', async () => {
       const noteArea = tr.querySelector('.note-area') as HTMLTextAreaElement;
@@ -96,7 +102,6 @@ function renderTable() {
       alert('保存しました');
     });
 
-    // 削除ボタン
     const delBtn = tr.querySelector('.delete-key') as HTMLButtonElement;
     delBtn.addEventListener('click', async () => {
       await db.delete(entry.key);
@@ -107,6 +112,44 @@ function renderTable() {
   }
 }
 
+// 除外パターン関連
+addPatternButton.addEventListener('click', async () => {
+  const pattern = excludePatternInput.value.trim();
+  if (!pattern) return;
+
+  // 現在のパターン一覧を取得
+  const current = await getExcludePatterns();
+  current.push(pattern);
+  await chrome.storage.local.set({ 'excludedPatterns': current });
+  excludePatternInput.value = '';
+  renderExcludePatterns();
+});
+
+async function renderExcludePatterns() {
+  const patterns = await getExcludePatterns();
+  excludePatterns = patterns;
+  excludePatternsList.innerHTML = '';
+  patterns.forEach((pat, index) => {
+    const li = document.createElement('li');
+    li.textContent = pat;
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = '削除';
+    deleteButton.addEventListener('click', async () => {
+      const updated = patterns.filter((_, i) => i !== index);
+      await chrome.storage.local.set({ 'excludedPatterns': updated });
+      renderExcludePatterns();
+    });
+    li.appendChild(deleteButton);
+    excludePatternsList.appendChild(li);
+  });
+}
+
+async function getExcludePatterns(): Promise<string[]> {
+  const result = await chrome.storage.local.get('excludedPatterns');
+  return result['excludedPatterns'] || [];
+}
+
+// 初期化処理
 filterButton.addEventListener('click', () => {
   const fromVal = dateFromEl.value ? new Date(dateFromEl.value) : undefined;
   const toVal = dateToEl.value ? new Date(dateToEl.value) : undefined;
@@ -119,5 +162,8 @@ filterButton.addEventListener('click', () => {
   });
 });
 
-loadData();
+(async () => {
+  await loadData();
+  await renderExcludePatterns();
+})();
 
