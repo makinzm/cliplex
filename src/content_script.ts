@@ -1,24 +1,4 @@
-let excludedPatterns: string[] = [];
-
-// content_scriptの初期化時にexcludedPatternsを読み込む
-chrome.storage.local.get('excludedPatterns', (res) => {
-  excludedPatterns = res['excludedPatterns'] || [];
-});
-
 document.addEventListener('mouseup', () => {
-  // 現在のページURLをチェック
-  const url = window.location.href;
-  if (excludedPatterns.some(p => {
-    try {
-      const regex = new RegExp(p);
-      return regex.test(url);
-    } catch (e) {
-      return false; // 正規表現が不正なら無視
-    }
-  })) {
-    // 除外パターンにマッチするならボタン表示しない
-    return;
-  }
   const selection = window.getSelection();
   if (!selection) return;
   
