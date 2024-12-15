@@ -5,6 +5,7 @@ module.exports = {
   entry: {
     background: './src/background.ts',
     content_script: './src/content_script.ts',
+    'options/options': './src/options/options.ts'
   },
   output: {
     filename: '[name].js',

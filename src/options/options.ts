@@ -17,7 +17,9 @@ const tableBody = document.getElementById('wordsTableBody') as HTMLTableSectionE
 let currentData: WordEntry[] = [];
 
 async function loadData(filter: FilterOptions = {}) {
+  console.log('Calling db.getAll() from options page...');
   let data = await db.getAll();
+  console.log('Data loaded:', data);
   // 日付フィルタ
   if (filter.from) {
     data = data.filter(d => new Date(d.addedDate) >= filter.from!);

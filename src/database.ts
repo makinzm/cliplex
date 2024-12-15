@@ -3,7 +3,9 @@ export class LocalDatabase {
   private STORAGE_KEY = 'word_entries';
 
   public async getAll(): Promise<WordEntry[]> {
+    console.log('Getting all entries from storage...');
     const result = await chrome.storage.local.get(this.STORAGE_KEY);
+    console.log('All entries:', result);
     return result[this.STORAGE_KEY] || [];
   }
 
