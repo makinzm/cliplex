@@ -118,7 +118,6 @@ function renderTable() {
         <ul>
           <li><a href="${oxfordLink}" target="_blank">Ox.</a></li>
           <li><a href="${weblioLink}" target="_blank">We.</a></li>
-          <li><a href="${yourDictLink}" target="_blank">Y.D.</a></li>
         </ul>
       </td>
       <td class="link-cell">
