@@ -11,8 +11,8 @@
     "format": "prettier --write 'src/**/*.ts'"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "makinzm",
+  "license": "MIT",
   "volta": {
     "node": "22.12.0",
     "npm": "10.9.2"
