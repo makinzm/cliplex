@@ -205,7 +205,7 @@ function renderTable() {
       entry.note = noteArea.value;
       entry.priority = Number(prioritySelect.value);
       await db.save(entry);
-      alert("保存しました");
+      console.log("保存しました");
     });
 
     // 削除ボタン
