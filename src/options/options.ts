@@ -113,7 +113,7 @@ function renderTable() {
     const hyperLink = `https://hypcol.marutank.net/?q=${encodeURIComponent(entry.key)}&d=f`;
 
     tr.innerHTML = `
-      <td>${entry.key}</td>
+      <td class="key-cell">${entry.key}</td>
       <td class="link-cell">
         <ul>
           <li><a href="${oxfordLink}" target="_blank">Ox.</a></li>

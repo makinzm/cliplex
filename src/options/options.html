@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Cliplex</title>
+  <link rel="icon" href="../ui/icon.png" type="image/png">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -45,6 +46,11 @@
       background-color: #f2f2f2;
     }
 
+    td.key-cell {
+      font-size: 1.2em; /* Key の文字サイズを大きく設定 */
+      font-weight: bold; /* Key を太字に設定 */
+    }
+
     td.link-cell ul {
       padding-left: 15px;
     }
@@ -78,6 +84,14 @@
     <h1>Cliplex</h1>
   </header>
 
+  <!-- ドメインブロック -->
+  <h2>ドメインブロック設定</h2>
+  <div>
+    <input type="text" id="excludedDomainInput" placeholder="example.com" />
+    <button id="addExcludedDomainButton">ドメインを追加</button>
+  </div>
+  <ul id="excludedDomainList"></ul>
+
   <!-- フィルタ -->
   <div>
     <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
@@ -95,14 +109,6 @@
     </label>
   </div>
 
-  <!-- ドメインブロック -->
-  <h2>ドメインブロック設定</h2>
-  <div>
-    <input type="text" id="excludedDomainInput" placeholder="example.com" />
-    <button id="addExcludedDomainButton">ドメインを追加</button>
-  </div>
-  <ul id="excludedDomainList"></ul>
-
   <!-- リンク記号の説明 -->
   <div id="linkLegend">
     <p>
@@ -117,11 +123,11 @@
   <table id="wordsTable" border="1" style="border-collapse: collapse;">
     <thead>
       <tr>
-        <th style="width: 5%;">Key</th>
+        <th style="width: 10%;">Key</th>
         <th style="width: 5%;">📕</th>
         <th style="width: 5%;">👂</th>
         <th style="width: 5%;">🖊</th>
-        <th style="width: 20%;">例文</th>
+        <th style="width: 15%;">例文</th>
         <th style="width: 30%;">メモ</th>
         <th style="width: 10%;">追加日</th>
         <th style="width: 10%;">優先度</th>

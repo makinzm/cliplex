@@ -83,9 +83,9 @@ document.addEventListener('mouseup', () => {
       });
     });
     if (response && response.status === 'ok') {
-      alert('保存しました');
+      console.log('保存しました in cliplex');
     } else {
-      alert('保存に失敗しました');
+      alert('保存に失敗しました in cliplex');
     }
     document.body.removeChild(button);
   });
