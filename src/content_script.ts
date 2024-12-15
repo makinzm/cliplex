@@ -5,6 +5,54 @@ chrome.storage.local.get('excludedPatterns', (res) => {
   excludedPatterns = res['excludedPatterns'] || [];
 });
 
+// スクロールしたときにボタンを消す
+document.addEventListener('scroll', () => {
+  const url = window.location.href;
+  if (excludedPatterns.some(p => {
+    try {
+      const regex = new RegExp(p);
+      return regex.test(url);
+    } catch (e) {
+      return false; // 正規表現が不正なら無視
+    }
+  })) {
+    // 除外パターンにマッチするならボタン表示しない
+    return
+  }
+
+  const existingButton = document.querySelector('button[data-extension="cliplex"]');
+  if (existingButton) {
+    document.body.removeChild(existingButton);
+  }
+});
+
+// 他の場所をクリックしたときにボタンを消す
+document.addEventListener('click', (e) => {
+  const url = window.location.href;
+  if (excludedPatterns.some(p => {
+    try {
+      const regex = new RegExp(p);
+      return regex.test(url);
+    } catch (e) {
+      return false; // 正規表現が不正なら無視
+    }
+  })) {
+    // 除外パターンにマッチするならボタン表示しない
+    return
+  }
+
+  const existingButton = document.querySelector('button[data-extension="cliplex"]');
+  if (existingButton && !existingButton.contains(e.target as Node)) {
+    // クリックの位置と、ボタンの位置の距離が 50px 以上ならボタンを消す
+    const rect = existingButton.getBoundingClientRect();
+    const threshold = 50;
+    if (e.clientX < rect.left - threshold || e.clientX > rect.right + threshold || e.clientY < rect.top - threshold || e.clientY > rect.bottom + threshold) {
+      document.body.removeChild(existingButton);
+    }
+  }
+});
+
+
 document.addEventListener('mouseup', () => {
   // 現在のページURLをチェック
   const url = window.location.href;
@@ -38,7 +86,7 @@ document.addEventListener('mouseup', () => {
   // 保存ボタンを生成
   const button = document.createElement('button');
   button.innerText = '保存';
-  button.style.position = 'fixed';
+  button.style.position = 'absolute';
   button.style.top = `${rect.bottom + window.scrollY}px`;
   button.style.left = `${rect.left + window.scrollX}px`;
   button.style.zIndex = '9999';
