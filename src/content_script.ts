@@ -22,18 +22,31 @@ document.addEventListener('mouseup', () => {
 
   document.body.appendChild(button);
 
-  const handleClick = async () => {
+  type SaveEntryResponse = {
+    status: string; // 'ok' など
+  };
+
+  // 保存ボタンをクリックしたときの処理
+  button.addEventListener('click', async () => {
     const entry: WordEntry = {
       key: text,
       examples: [],
       note: '',
       addedDate: new Date().toISOString(),
-      priority: 3
+      priority: 3,
     };
-    await chrome.runtime.sendMessage({ type: 'save_entry', entry });
+    const response = await new Promise<SaveEntryResponse>((resolve) => {
+      chrome.runtime.sendMessage({ type: 'save_entry', entry }, (res) => {
+        resolve(res);
+      });
+    });
+    if (response && response.status === 'ok') {
+      alert('保存しました');
+    } else {
+      alert('保存に失敗しました');
+    }
     document.body.removeChild(button);
-  };
-  button.addEventListener('click', handleClick, { once: true });
+  });
 
   // 一定時間後にボタンを消す（任意）
   setTimeout(() => {
