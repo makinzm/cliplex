@@ -8,6 +8,15 @@ npm run build
 
 Then, load the extension from the `dist` directory in Chrome.
 
+# About Icon
+
+It is created on [Canva](https://www.canva.com/).
+- Phonto: Magnolia Script
+
+- [Copyright ownership of designs made in Canva - Canva Help Center](https://www.canva.com/en/help/copyright-design-ownership/)
+- Copyright of Magnolia Script :  [Magnolia Script font](https://online-fonts.com/fonts/magnolia-script)
+
+
 # Reference
 
 [Extensions / Get started  |  Chrome for Developers](https://developer.chrome.com/docs/extensions/get-started)

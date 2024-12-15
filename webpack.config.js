@@ -26,8 +26,8 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'src/manifest.json', to: 'manifest.json' },
-        { from: 'src/options', to: 'options' }
-        // { from: 'src/ui', to: 'ui' } // UIリソース(CSSやアイコンなど)
+        { from: 'src/options', to: 'options' },
+        { from: 'src/ui', to: 'ui' } // UIリソース(CSSやアイコンなど)
       ]
     })
   ],
