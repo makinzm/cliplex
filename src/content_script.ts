@@ -31,12 +31,6 @@ document.addEventListener('mouseup', () => {
   const range = selection.getRangeAt(0);
   const rect = range.getBoundingClientRect();
 
-  // 既存に作成されたボタンがあれば削除
-  const existingButton = document.querySelector('button[data-extension="cliplex"]');
-  if (existingButton) {
-    document.body.removeChild(existingButton);
-  }
-
   // 保存ボタンを生成
   const button = document.createElement('button');
   button.innerText = '保存';
