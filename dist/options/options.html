@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cliplex</title>
+  <link rel="icon" href="../ui/icon.png" type="image/png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #f2f2f2;
+      border-bottom: 1px solid #ccc;
+    }
+
+    header img {
+      height: 40px;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border: 1px solid #ccc;
+      word-wrap: break-word;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    td.key-cell {
+      font-size: 1.2em; /* Key の文字サイズを大きく設定 */
+      font-weight: bold; /* Key を太字に設定 */
+    }
+
+    td.link-cell ul {
+      padding-left: 15px;
+    }
+
+    #pagination {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .pagination-button {
+      margin: 0 5px;
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .pagination-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    #linkLegend {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="../ui/icon.png" alt="Cliplex Icon">
+    <h1>Cliplex</h1>
+  </header>
+
+  <!-- ドメインブロック -->
+  <h2>ドメインブロック設定</h2>
+  <div>
+    <input type="text" id="excludedDomainInput" placeholder="example.com" />
+    <button id="addExcludedDomainButton">ドメインを追加</button>
+  </div>
+  <ul id="excludedDomainList"></ul>
+
+  <!-- フィルタ -->
+  <div>
+    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
+    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
+    <button id="filterButton">フィルタ</button>
+  </div>
+
+  <div>
+    <label>優先度ソート:
+      <select id="prioritySort">
+        <option value="">なし</option>
+        <option value="asc">昇順</option>
+        <option value="desc">降順</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- リンク記号の説明 -->
+  <div id="linkLegend">
+    <p>
+      📕: 辞書系 (Oxford, Weblio) |
+      👂: 動画系 (Youglish, Play Phrase) |
+      🖊: その他 (Your Dictionary, Hyper Collection)
+    </p>
+  </div>
+
+  <!-- 単語一覧 -->
+  <h2>単語一覧</h2>
+  <table id="wordsTable" border="1" style="border-collapse: collapse;">
+    <thead>
+      <tr>
+        <th style="width: 10%;">Key</th>
+        <th style="width: 5%;">📕</th>
+        <th style="width: 5%;">👂</th>
+        <th style="width: 5%;">🖊</th>
+        <th style="width: 15%;">例文</th>
+        <th style="width: 30%;">メモ</th>
+        <th style="width: 10%;">追加日</th>
+        <th style="width: 10%;">優先度</th>
+        <th style="width: 10%;">操作</th>
+      </tr>
+    </thead>
+    <tbody id="wordsTableBody"></tbody>
+  </table>
+
+  <!-- ページネーション -->
+  <div id="pagination"></div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
+

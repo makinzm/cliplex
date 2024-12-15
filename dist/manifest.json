@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "ClipLex",
+  "version": "1.0.0",
+  "description": "Improve your English vocabulary with ClipLex",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "options_page": "options/options.html",
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content_script.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Support your English learning"
+  },
+  "icons": {
+    "16": "ui/icon.png",
+    "64": "ui/icon.png",
+    "128": "ui/icon.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["ui/icon.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+
