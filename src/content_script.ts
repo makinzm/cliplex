@@ -46,15 +46,20 @@ document.addEventListener('mouseup', () => {
 
   // 保存ボタンを生成
   const button = document.createElement('button');
-  button.innerText = '保存';
   button.style.position = 'absolute';
   button.style.top = `${rect.bottom + window.scrollY}px`;
   button.style.left = `${rect.left + window.scrollX}px`;
   button.style.zIndex = '9999';
-  button.style.background = '#ffd700';
-  button.style.border = '1px solid #ccc';
+  button.style.background = 'transparent';
+  button.style.border = 'none';
   button.style.cursor = 'pointer';
 
+  const iconImg = document.createElement('img');
+  iconImg.src = chrome.runtime.getURL('ui/icon.png');
+  iconImg.alt = '保存';
+  iconImg.style.width = '24px';
+  iconImg.style.height = '24px';
+  button.appendChild(iconImg);
   button.dataset.extension = 'cliplex';
 
   document.body.appendChild(button);

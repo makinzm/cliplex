@@ -23,6 +23,12 @@
     "16": "ui/icon.png",
     "64": "ui/icon.png",
     "128": "ui/icon.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["ui/icon.png"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
 
