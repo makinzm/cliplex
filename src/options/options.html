@@ -8,6 +8,7 @@
 <body>
   <h1>保存した単語一覧</h1>
 
+  <!-- 既存のフィルタUI -->
   <div>
     <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
     <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
@@ -24,6 +25,15 @@
     </label>
   </div>
 
+  <!-- ドメインブロック設定UI -->
+  <h2>ドメインブロック設定</h2>
+  <div>
+    <input type="text" id="excludedDomainInput" placeholder="example.com" />
+    <button id="addExcludedDomainButton">ドメインを追加</button>
+  </div>
+  <ul id="excludedDomainList"></ul>
+
+  <h2>単語一覧</h2>
   <table id="wordsTable" border="1" style="border-collapse: collapse;">
     <thead>
       <tr>

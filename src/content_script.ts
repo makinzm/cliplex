@@ -1,3 +1,16 @@
+(async () => {
+  const currentDomain = window.location.hostname;
+  console.log(`Current domain: ${currentDomain}`);
+  const storage = await chrome.storage.local.get('excluded_domains');
+  const excludedDomains: DomainEntry[] = storage['excluded_domains'] || [];
+  const isExcluded = excludedDomains.some(d => d.domain === currentDomain);
+  
+  if (isExcluded) {
+    // ブロック対象のドメインなので、このコンテントスクリプトの機能を停止
+    console.log(`This domain (${currentDomain}) is excluded from ClipLex.`);
+    return;
+  }
+
 // スクロールしたときにボタンを消す
 document.addEventListener('scroll', () => {
   const existingButton = document.querySelector('button[data-extension="cliplex"]');
@@ -79,4 +92,4 @@ document.addEventListener('mouseup', () => {
     }
   }, 5000);
 });
-
+})();

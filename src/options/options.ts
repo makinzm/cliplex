@@ -119,5 +119,38 @@ filterButton.addEventListener('click', () => {
   });
 });
 
+const excludedDomainInput = document.getElementById('excludedDomainInput') as HTMLInputElement;
+const addExcludedDomainButton = document.getElementById('addExcludedDomainButton') as HTMLButtonElement;
+const excludedDomainList = document.getElementById('excludedDomainList') as HTMLUListElement;
+
+// excludedDomainsリストの表示更新関数
+async function renderExcludedDomains() {
+  const domains = await db.getAllExcludedDomains();
+  excludedDomainList.innerHTML = '';
+  for (const d of domains) {
+    const li = document.createElement('li');
+    li.textContent = d.domain;
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = '削除';
+    removeBtn.addEventListener('click', async () => {
+      await db.removeExcludedDomain(d.domain);
+      renderExcludedDomains();
+    });
+    li.appendChild(removeBtn);
+    excludedDomainList.appendChild(li);
+  }
+}
+
+addExcludedDomainButton.addEventListener('click', async () => {
+  const domain = excludedDomainInput.value.trim();
+  if (domain) {
+    await db.addExcludedDomain(domain);
+    excludedDomainInput.value = '';
+    renderExcludedDomains();
+  }
+});
+
+
+renderExcludedDomains();
 loadData();
 
