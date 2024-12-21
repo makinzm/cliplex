@@ -1,13 +1,20 @@
+import { checkDomainFilterMode } from "./content_script_helper";
+
 (async () => {
   const currentDomain = window.location.hostname;
   console.log(`Current domain: ${currentDomain}`);
-  const storage = await chrome.storage.local.get("excluded_domains");
+  const storage = await chrome.storage.local.get([
+    "domainFilterMode",   // "exclude" or "include"
+    "excluded_domains",
+    "included_domains"
+  ]);
+  const mode = storage["domainFilterMode"] ?? "exclude";
   const excludedDomains: DomainEntry[] = storage["excluded_domains"] || [];
-  const isExcluded = excludedDomains.some((d) => d.domain === currentDomain);
+  const includedDomains: DomainEntry[] = storage["included_domains"] || [];
 
-  if (isExcluded) {
-    // ブロック対象のドメインなので、このコンテントスクリプトの機能を停止
-    console.log(`This domain (${currentDomain}) is excluded from ClipLex.`);
+  const shouldRun = checkDomainFilterMode(mode, excludedDomains, includedDomains, currentDomain);
+  if (!shouldRun) {
+    console.log("Content script blocked for this domain.");
     return;
   }
 

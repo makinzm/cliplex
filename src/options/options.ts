@@ -270,5 +270,69 @@ addExcludedDomainButton.addEventListener("click", async () => {
   }
 });
 
+// 1) モード保存先キーを決める
+const DOMAIN_FILTER_MODE_KEY = "domainFilterMode";
+
+// 2) ラジオボタン要素を取得
+const radioExclude = document.getElementById("radioExclude") as HTMLInputElement;
+const radioInclude = document.getElementById("radioInclude") as HTMLInputElement;
+
+// 3) chrome.storage.local からモードを読み込んでUIに反映
+async function loadDomainFilterMode() {
+  const result = await chrome.storage.local.get(DOMAIN_FILTER_MODE_KEY);
+  const mode = result[DOMAIN_FILTER_MODE_KEY] ?? "exclude"; // デフォルト exclude
+  if (mode === "include") {
+    radioInclude.checked = true;
+  } else {
+    radioExclude.checked = true; // exclude
+  }
+}
+
+// 4) ラジオボタンの変更を検知して保存
+function setupDomainFilterModeListeners() {
+  [radioExclude, radioInclude].forEach(radio => {
+    radio.addEventListener("change", async () => {
+      if (radio.checked) {
+        await chrome.storage.local.set({ [DOMAIN_FILTER_MODE_KEY]: radio.value });
+      }
+    });
+  });
+}
+
+
+function initializeSettings() {
+  const storedMode = localStorage.getItem("domainFilterMode") || "include";
+  if (storedMode === "exclude") {
+    radioExclude.checked = true;
+    toggleSettings("exclude");
+  } else {
+    radioInclude.checked = true;
+    toggleSettings("include");
+  }
+}
+
+const excludeSettings = document.getElementById("excludeSettings") as HTMLDivElement;
+const includeSettings = document.getElementById("includeSettings") as HTMLDivElement;
+
+function toggleSettings(mode: "exclude" | "include") {
+  if (mode === "exclude") {
+    excludeSettings.style.display = "block";
+    includeSettings.style.display = "none";
+  } else {
+    excludeSettings.style.display = "none";
+    includeSettings.style.display = "block";
+  }
+  // モードを保存
+  localStorage.setItem("domainFilterMode", mode);
+}
+
+// ラジオボタンのイベントリスナー
+radioExclude.addEventListener("change", () => toggleSettings("exclude"));
+radioInclude.addEventListener("change", () => toggleSettings("include"));
+
+initializeSettings();
 renderExcludedDomains();
 loadData();
+loadDomainFilterMode();
+setupDomainFilterModeListeners();
+
