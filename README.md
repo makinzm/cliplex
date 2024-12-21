@@ -105,6 +105,7 @@ cliplex/
 以下のスクリプトを活用してコード品質を維持:
 
 - コードの整形: `npm run format`
+- E2Eテストのコード作成: `npx playwright codegen https://makinzm.github.io/rust-wasm-github/`
 
 ---
 
