@@ -1,3 +1,5 @@
+declare global{
+
 interface WordEntry {
   key: string;
   examples: string[];
@@ -9,3 +11,7 @@ interface WordEntry {
 interface DomainEntry {
   domain: string;
 }
+
+}
+
+export {}; // モジュール化を回避するため
