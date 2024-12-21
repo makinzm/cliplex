@@ -24,5 +24,4 @@ jobs:
 
       # Error: https://github.com/makinzm/cliplex/actions/runs/12446276709/job/34748502856
       - name: Run E2E tests with xvfb
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" 
-
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" npm run test:e2e
