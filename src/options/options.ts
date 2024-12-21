@@ -270,5 +270,37 @@ addExcludedDomainButton.addEventListener("click", async () => {
   }
 });
 
+// 1) モード保存先キーを決める
+const DOMAIN_FILTER_MODE_KEY = "domainFilterMode";
+
+// 2) ラジオボタン要素を取得
+const radioExclude = document.getElementById("radioExclude") as HTMLInputElement;
+const radioInclude = document.getElementById("radioInclude") as HTMLInputElement;
+
+// 3) chrome.storage.local からモードを読み込んでUIに反映
+async function loadDomainFilterMode() {
+  const result = await chrome.storage.local.get(DOMAIN_FILTER_MODE_KEY);
+  const mode = result[DOMAIN_FILTER_MODE_KEY] ?? "exclude"; // デフォルト exclude
+  if (mode === "include") {
+    radioInclude.checked = true;
+  } else {
+    radioExclude.checked = true; // exclude
+  }
+}
+
+// 4) ラジオボタンの変更を検知して保存
+function setupDomainFilterModeListeners() {
+  [radioExclude, radioInclude].forEach(radio => {
+    radio.addEventListener("change", async () => {
+      if (radio.checked) {
+        await chrome.storage.local.set({ [DOMAIN_FILTER_MODE_KEY]: radio.value });
+      }
+    });
+  });
+}
+
 renderExcludedDomains();
 loadData();
+loadDomainFilterMode();
+setupDomainFilterModeListeners();
+

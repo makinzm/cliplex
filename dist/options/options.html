@@ -84,6 +84,18 @@
     <h1>Cliplex</h1>
   </header>
 
+  <h2>ドメインフィルターモード</h2>
+  <div>
+    <label>
+      <input type="radio" name="domainFilterMode" value="exclude" id="radioExclude" />
+      Excludeモード (ブラックリスト)
+    </label>
+    <label>
+      <input type="radio" name="domainFilterMode" value="include" id="radioInclude" checked/>
+      Includeモード (ホワイトリスト)
+    </label>
+  </div>
+
   <!-- ドメインブロック -->
   <h2>ドメインブロック設定</h2>
   <div>
@@ -91,6 +103,13 @@
     <button id="addExcludedDomainButton">ドメインを追加</button>
   </div>
   <ul id="excludedDomainList"></ul>
+
+  <h2>ドメイン限定設定 (Included)</h2>
+  <div>
+    <input type="text" id="includedDomainInput" placeholder="example.org" />
+    <button id="addIncludedDomainButton">ドメインを追加</button>
+  </div>
+  <ul id="includedDomainList"></ul>
 
   <!-- フィルタ -->
   <div>
