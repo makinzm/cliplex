@@ -88,28 +88,33 @@
   <div>
     <label>
       <input type="radio" name="domainFilterMode" value="exclude" id="radioExclude" />
-      Excludeモード (ブラックリスト)
+      Excludeモード (ブラックリスト: すべてのドメインで拡張機能が機能しますが、指定したドメインのみ機能しないようにします)
     </label>
     <label>
       <input type="radio" name="domainFilterMode" value="include" id="radioInclude" checked/>
-      Includeモード (ホワイトリスト)
+      Includeモード (ホワイトリスト: 指定したドメインのみ拡張機能が機能します)
     </label>
   </div>
 
-  <!-- ドメインブロック -->
-  <h2>ドメインブロック設定</h2>
-  <div>
-    <input type="text" id="excludedDomainInput" placeholder="example.com" />
-    <button id="addExcludedDomainButton">ドメインを追加</button>
+  <!-- Excludeモード設定 -->
+  <div id="excludeSettings" style="display: none;">
+    <h2>ドメインブロック設定</h2>
+    <div>
+      <input type="text" id="excludedDomainInput" placeholder="example.com" />
+      <button id="addExcludedDomainButton">ドメインを追加</button>
+    </div>
+    <ul id="excludedDomainList"></ul>
   </div>
-  <ul id="excludedDomainList"></ul>
 
-  <h2>ドメイン限定設定 (Included)</h2>
-  <div>
-    <input type="text" id="includedDomainInput" placeholder="example.org" />
-    <button id="addIncludedDomainButton">ドメインを追加</button>
+  <!-- Includeモード設定 -->
+  <div id="includeSettings" style="display: none;">
+    <h2>ドメイン限定設定 (Included)</h2>
+    <div>
+      <input type="text" id="includedDomainInput" placeholder="example.org" />
+      <button id="addIncludedDomainButton">ドメインを追加</button>
+    </div>
+    <ul id="includedDomainList"></ul>
   </div>
-  <ul id="includedDomainList"></ul>
 
   <!-- フィルタ -->
   <div>

@@ -299,6 +299,38 @@ function setupDomainFilterModeListeners() {
   });
 }
 
+
+function initializeSettings() {
+  const storedMode = localStorage.getItem("domainFilterMode") || "include";
+  if (storedMode === "exclude") {
+    radioExclude.checked = true;
+    toggleSettings("exclude");
+  } else {
+    radioInclude.checked = true;
+    toggleSettings("include");
+  }
+}
+
+const excludeSettings = document.getElementById("excludeSettings") as HTMLDivElement;
+const includeSettings = document.getElementById("includeSettings") as HTMLDivElement;
+
+function toggleSettings(mode: "exclude" | "include") {
+  if (mode === "exclude") {
+    excludeSettings.style.display = "block";
+    includeSettings.style.display = "none";
+  } else {
+    excludeSettings.style.display = "none";
+    includeSettings.style.display = "block";
+  }
+  // モードを保存
+  localStorage.setItem("domainFilterMode", mode);
+}
+
+// ラジオボタンのイベントリスナー
+radioExclude.addEventListener("change", () => toggleSettings("exclude"));
+radioInclude.addEventListener("change", () => toggleSettings("include"));
+
+initializeSettings();
 renderExcludedDomains();
 loadData();
 loadDomainFilterMode();
