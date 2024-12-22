@@ -1,6 +1,11 @@
 // tests/e2e/content_script.spec.ts
 import { test, expect, chromium } from "@playwright/test";
 import * as path from "path";
+import * as fs from "fs";
+import * as util from "util";
+
+// 非同期でディレクトリを削除するためのユーティリティ
+const rmdir = util.promisify(fs.rmdir);
 
 test("Content script should create a button when selecting 'World' text", async () => {
   // 拡張機能 dist フォルダへのパス (webpack build 後の出力先)
@@ -68,3 +73,11 @@ test("Content script should create a button when selecting 'World' text", async 
   await context.close();
 });
 
+// テスト後にユーザーデータディレクトリを削除
+test.afterAll(async () => {
+  const userDataDir = path.resolve(__dirname, "../../.tmp-user-data");
+  if (fs.existsSync(userDataDir)) {
+    await rmdir(userDataDir, { recursive: true });
+    console.log("Removed user data directory:", userDataDir);
+  }
+})
