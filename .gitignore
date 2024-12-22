@@ -3,4 +3,3 @@ node_modules/
 coverage/
 .tmp-user-data/
 test-results/
-dist/options/options.ts
