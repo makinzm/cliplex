@@ -270,6 +270,39 @@ addExcludedDomainButton.addEventListener("click", async () => {
   }
 });
 
+// DOM要素取得
+const includedDomainInput = document.getElementById("includedDomainInput") as HTMLInputElement;
+const addIncludedDomainButton = document.getElementById("addIncludedDomainButton") as HTMLButtonElement;
+const includedDomainList = document.getElementById("includedDomainList") as HTMLUListElement;
+
+// included_domainsリストの表示更新関数
+async function renderIncludedDomains() {
+  const domains = await db.getAllIncludedDomains();
+  includedDomainList.innerHTML = "";
+  for (const d of domains) {
+    const li = document.createElement("li");
+    li.textContent = d.domain;
+    const removeBtn = document.createElement("button");
+    removeBtn.textContent = "削除";
+    removeBtn.addEventListener("click", async () => {
+      await db.removeIncludedDomain(d.domain);
+      renderIncludedDomains();
+    });
+    li.appendChild(removeBtn);
+    includedDomainList.appendChild(li);
+  }
+}
+
+// Includeドメイン追加ボタンのイベントリスナー
+addIncludedDomainButton.addEventListener("click", async () => {
+  const domain = includedDomainInput.value.trim();
+  if (domain) {
+    await db.addIncludedDomain(domain);
+    includedDomainInput.value = ""; // 入力欄をクリア
+    renderIncludedDomains();
+  }
+});
+
 // 1) モード保存先キーを決める
 const DOMAIN_FILTER_MODE_KEY = "domainFilterMode";
 
@@ -332,6 +365,7 @@ radioInclude.addEventListener("change", () => toggleSettings("include"));
 
 initializeSettings();
 renderExcludedDomains();
+renderIncludedDomains();
 loadData();
 loadDomainFilterMode();
 setupDomainFilterModeListeners();
