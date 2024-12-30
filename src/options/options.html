@@ -6,6 +6,47 @@
   <title>Cliplex</title>
   <link rel="icon" href="../ui/icon.png" type="image/png">
   <style>
+    #filterOption {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px; /* 要素間のスペースを追加 */
+      width: 100%; /* 横幅を100%に広げる */
+      margin: 20px auto; /* 上下に余白を追加 */
+      padding: 10px; /* 内側に余白を追加 */
+      box-sizing: border-box; /* パディングを含めて幅を計算 */
+      background-color: #f9f9f9; /* 背景色をつけて視認性を向上 */
+      border: 1px solid #ccc; /* 枠線を追加 */
+      border-radius: 8px; /* 枠線の角を丸くする */
+    }
+    #filterOption label,
+    #filterOption button {
+      font-size: 1.2em; /* 文字サイズを少し大きくする */
+    }
+    #filterOption input {
+      padding: 5px;
+      font-size: 1em; /* 入力欄の文字サイズを調整 */
+      width: 150px; /* 入力欄の幅を指定 */
+    }
+
+    #sortOption {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    #sortOption label,
+    #sortOption select {
+      font-size: 1.2em;
+    }
+
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -126,6 +167,23 @@
     </p>
   </div>
 
+  <!-- フィルタ -->
+  <div id="filterOption">
+    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
+    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
+    <button id="filterButton">フィルタ</button>
+  </div>
+
+  <div id="sortOption">
+    <label>優先度ソート:
+      <select id="prioritySort">
+        <option value="asc">昇順</option>
+        <option value="desc" selected>降順</option>
+      </select>
+    </label>
+  </div>
+
+
   <!-- 単語一覧 -->
   <h2>単語一覧</h2>
   <table id="wordsTable">
@@ -179,24 +237,6 @@
     </div>
     <ul id="includedDomainList"></ul>
   </div>
-
-  <!-- フィルタ -->
-  <div>
-    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
-    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
-    <button id="filterButton">フィルタ</button>
-  </div>
-
-  <div>
-    <label>優先度ソート:
-      <select id="prioritySort">
-        <option value="asc">昇順</option>
-        <option value="desc" selected>降順</option>
-      </select>
-    </label>
-  </div>
-
-
 
   <!-- 新規単語追加フォーム -->
   <div id="addWordSection">
