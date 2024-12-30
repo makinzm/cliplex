@@ -76,6 +76,70 @@ async function loadData(filter: FilterOptions = {}) {
   renderWords();
 }
 
+// モーダル関連要素の取得
+const openModalButton = document.getElementById("openModalButton") as HTMLButtonElement;
+const closeModalButton = document.getElementById("closeModalButton") as HTMLButtonElement;
+const modalOverlay = document.getElementById("modalOverlay") as HTMLDivElement;
+
+// モーダルを開く処理
+openModalButton.addEventListener("click", () => {
+  modalOverlay.style.display = "flex"; // モーダルを表示
+});
+
+// モーダルを閉じる処理
+closeModalButton.addEventListener("click", () => {
+  modalOverlay.style.display = "none"; // モーダルを非表示
+});
+
+modalOverlay.addEventListener("click", (event) => {
+  if (event.target === modalOverlay) {
+    modalOverlay.style.display = "none";
+  }
+});
+
+// 新しい単語を追加する処理
+const addNewWordButton = document.getElementById("addNewWordButton") as HTMLButtonElement;
+addNewWordButton.addEventListener("click", async () => {
+  const newWordKey = (document.getElementById("newWordKey") as HTMLInputElement).value.trim();
+  const newWordExamples = (document.getElementById("newWordExamples") as HTMLInputElement).value
+    .split(",")
+    .map((example) => example.trim())
+    .filter((example) => example); // 空白を除外
+  const newWordNote = (document.getElementById("newWordNote") as HTMLTextAreaElement).value.trim();
+  const newWordPriority = parseInt((document.getElementById("newWordPriority") as HTMLSelectElement).value);
+
+  if (!newWordKey) {
+    alert("単語を入力してください！");
+    return;
+  }
+
+  const newEntry: WordEntry = {
+    key: newWordKey,
+    examples: newWordExamples,
+    note: newWordNote,
+    priority: newWordPriority,
+    addedDate: new Date().toISOString(),
+  };
+
+  // DB に保存
+  await db.save(newEntry);
+
+  // 新規単語をリストにレンダリング
+  renderWordCard(newEntry);
+
+  // モーダルを閉じる
+  modalOverlay.style.display = "none";
+
+  loadData(); // 再読み込み
+
+  // フォームをリセット
+  (document.getElementById("newWordKey") as HTMLInputElement).value = "";
+  (document.getElementById("newWordExamples") as HTMLInputElement).value = "";
+  (document.getElementById("newWordNote") as HTMLTextAreaElement).value = "";
+  (document.getElementById("newWordPriority") as HTMLSelectElement).value = "3";
+});
+
+
 /** ========== カード描画 ========== */
 /**
  * 1つのWordEntryをカードとして描画する
@@ -312,50 +376,6 @@ prioritySortEl.addEventListener("change", () => {
     to: toVal,
     prioritySort: priorityVal,
   });
-});
-
-/** ========== 新規単語追加機能 ========== */
-const newWordKeyEl = document.getElementById("newWordKey") as HTMLInputElement;
-const newWordExamplesEl = document.getElementById("newWordExamples") as HTMLInputElement;
-const newWordNoteEl = document.getElementById("newWordNote") as HTMLTextAreaElement;
-const newWordPriorityEl = document.getElementById("newWordPriority") as HTMLSelectElement;
-const addNewWordButton = document.getElementById("addNewWordButton") as HTMLButtonElement;
-
-addNewWordButton.addEventListener("click", async () => {
-  const key = newWordKeyEl.value.trim();
-  if (!key) {
-    alert("単語のキーが空です。入力してください。");
-    return;
-  }
-
-  // 例文はカンマ区切りで受け取る
-  const examples = newWordExamplesEl.value
-    .split(",")
-    .map((ex) => ex.trim())
-    .filter((ex) => ex); // 空の要素を除外
-
-  const note = newWordNoteEl.value || "";
-  const priority = Number(newWordPriorityEl.value) || 3;
-
-  const newEntry: WordEntry = {
-    key,
-    examples,
-    note,
-    priority,
-    addedDate: new Date().toISOString(),
-  };
-
-  // DBに保存
-  await db.save(newEntry);
-
-  // フォームをリセット
-  newWordKeyEl.value = "";
-  newWordExamplesEl.value = "";
-  newWordNoteEl.value = "";
-  newWordPriorityEl.value = "3";
-
-  // 再読み込み
-  loadData();
 });
 
 /** ========== Exclude / Includeドメインリスト表示・操作 ========== */

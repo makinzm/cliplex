@@ -307,6 +307,56 @@
       background-color: #ccc;
       cursor: not-allowed;
     }
+
+    /* モーダル全体の背景 */
+    .modal-overlay {
+      display: none; /* 初期状態では非表示 */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* モーダル本体 */
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -15px; /* モーダルの外側に配置 */
+      right: -15px; /* モーダルの右外側 */
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 50%; /* 完全な丸形にする */
+      padding: 8px;
+      cursor: pointer;
+      font-size: 1.2em; /* ボタンの文字サイズを調整 */
+      width: 35px; /* ボタンの幅を調整 */
+      height: 35px; /* ボタンの高さを調整 */
+      display: flex; /* 中央揃え */
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 軽い影を追加して立体感を */
+    }
+
+  
+    .modal-close:hover {
+      background: #d64545;
+    }
+
   </style>
 </head>
 <body>
@@ -314,31 +364,42 @@
     <img src="../ui/icon.png" alt="Cliplex Icon">
     <h1>Cliplex</h1>
   </header>
-  
-  <div class="word-card" id="addWordSection">
-    <div class="word-header">
-      <span class="word-title">
-        <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
-      </span>
-      <div class="priority-section">
-        <label>優先度:</label>
-        <select id="newWordPriority">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3" selected>3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
+
+  <!-- 新規単語追加ボタン -->
+  <div class="word-actions">
+    <button id="openModalButton">新規単語追加</button>
+  </div>
+
+  <!-- モーダルウィンドウ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModalButton">x</button>
+      <div class="word-card">
+        <div class="word-header">
+          <span class="word-title">
+            <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
+          </span>
+          <div class="priority-section">
+            <label>優先度:</label>
+            <select id="newWordPriority">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <div class="note-section">
+          <textarea id="newWordNote" placeholder="メモ" rows="2"></textarea>
+        </div>
+        <div class="example-list">
+          <input type="text" id="newWordExamples" placeholder="例文 (カンマ区切りで入力)" />
+        </div>
+        <div class="word-actions">
+          <button id="addNewWordButton">追加</button>
+        </div>
       </div>
-    </div>
-    <div class="note-section">
-      <textarea id="newWordNote" placeholder="メモ" rows="2"></textarea>
-    </div>
-    <div class="example-list">
-      <input type="text" id="newWordExamples" placeholder="例文 (カンマ区切りで入力)" />
-    </div>
-    <div class="word-actions">
-      <button id="addNewWordButton">追加</button>
     </div>
   </div>
 
