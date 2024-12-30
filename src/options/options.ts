@@ -103,7 +103,7 @@ function renderWordCard(entry: WordEntry) {
 
   const prioritySelect = document.createElement("select");
   prioritySelect.className = "priority-select";
-  [1, 2, 3, 4, 5].forEach((p) => {
+  [5,4,3,2,1].forEach((p) => {
     const option = document.createElement("option");
     option.value = String(p);
     option.textContent = String(p);
