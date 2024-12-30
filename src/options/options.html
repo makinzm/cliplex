@@ -33,6 +33,8 @@
     table {
       width: 100%;
       table-layout: fixed;
+      margin-bottom: 20px;
+      border-collapse: collapse;
     }
 
     th, td {
@@ -40,6 +42,7 @@
       padding: 8px;
       border: 1px solid #ccc;
       word-wrap: break-word;
+      vertical-align: top;
     }
 
     th {
@@ -49,16 +52,21 @@
     td.key-cell {
       font-size: 1.2em; /* Key の文字サイズを大きく設定 */
       font-weight: bold; /* Key を太字に設定 */
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     td.link-cell ul {
       padding-left: 15px;
+      margin: 0;
     }
 
     #pagination {
       display: flex;
       justify-content: center;
       margin-top: 10px;
+      margin-bottom: 20px;
     }
 
     .pagination-button {
@@ -74,6 +82,31 @@
     }
 
     #linkLegend {
+      margin-bottom: 10px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .edit-key-input {
+      width: 90%;
+    }
+
+    /* 新規単語追加フォーム */
+    #addWordSection {
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+
+    #addWordSection h2 {
+      margin-top: 0;
+    }
+
+    #addWordSection input,
+    #addWordSection textarea,
+    #addWordSection select {
+      margin-right: 5px;
       margin-bottom: 10px;
     }
   </style>
@@ -144,7 +177,7 @@
 
   <!-- 単語一覧 -->
   <h2>単語一覧</h2>
-  <table id="wordsTable" border="1" style="border-collapse: collapse;">
+  <table id="wordsTable">
     <thead>
       <tr>
         <th style="width: 10%;">Key</th>
@@ -163,6 +196,33 @@
 
   <!-- ページネーション -->
   <div id="pagination"></div>
+
+  <!-- 新規単語追加フォーム -->
+  <div id="addWordSection">
+    <h2>新規単語追加</h2>
+    <div>
+      <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
+    </div>
+    <div>
+      <label>例文 (カンマ区切り): </label>
+      <input type="text" id="newWordExamples" placeholder="例) Hello world, This is a pen." />
+    </div>
+    <div>
+      <label>メモ: </label>
+      <textarea id="newWordNote" rows="2" cols="30"></textarea>
+    </div>
+    <div>
+      <label>優先度: </label>
+      <select id="newWordPriority">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <button id="addNewWordButton">追加</button>
+    </div>
+  </div>
 
   <script type="module" src="options.js"></script>
 </body>
