@@ -86,22 +86,38 @@
 
     .word-header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 1.2em;
-      font-weight: bold;
+      justify-content: space-between; /* 要素を左右に配置 */
+      align-items: center; /* 縦中央揃え */
       margin-bottom: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc; /* 下線を追加して分かりやすく */
     }
 
-    .word-header .priority-section {
+    .priority-section {
       display: flex;
       align-items: center;
       gap: 10px;
+      font-size: 1em;
     }
 
-    .word-header .priority-select {
-      padding: 5px;
-      font-size: 0.9em;
+    .word-title {
+      font-size: 1.2em; /* 文字を少し大きく */
+      font-weight: bold; /* 太字にする */
+      margin-right: auto; /* 左詰め */
+      margin-left: 10px;
+    }
+
+    .delete-word-button {
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-word-button:hover {
+      background-color: #d64545;
     }
 
     .example-list {

@@ -88,11 +88,6 @@ function renderWordCard(entry: WordEntry) {
   const header = document.createElement("div");
   header.className = "word-header";
 
-  // 単語タイトル
-  const wordTitle = document.createElement("span");
-  wordTitle.innerHTML = `<b>${entry.key}</b>`;
-  header.appendChild(wordTitle);
-
   // 優先度セクション
   const prioritySection = document.createElement("div");
   prioritySection.className = "priority-section";
@@ -103,7 +98,7 @@ function renderWordCard(entry: WordEntry) {
 
   const prioritySelect = document.createElement("select");
   prioritySelect.className = "priority-select";
-  [5,4,3,2,1].forEach((p) => {
+  [5, 4, 3, 2, 1].forEach((p) => {
     const option = document.createElement("option");
     option.value = String(p);
     option.textContent = String(p);
@@ -116,12 +111,19 @@ function renderWordCard(entry: WordEntry) {
     entry.priority = Number(prioritySelect.value);
     await db.save(entry);
     console.log("優先度が変更されました:", entry.key, entry.priority);
-    // 再読み込みしてソートし直す場合は必要に応じて:
-    // await loadData();
+    renderWords(); // 再描画
   });
 
   prioritySection.appendChild(prioritySelect);
+  header.appendChild(prioritySection);
 
+  // Wordタイトル
+  const wordTitle = document.createElement("span");
+  wordTitle.className = "word-title";
+  wordTitle.textContent = entry.key;
+  header.appendChild(wordTitle);
+
+  // 削除ボタン
   const deleteWordButton = document.createElement("button");
   deleteWordButton.textContent = "削除";
   deleteWordButton.className = "delete-word-button";
@@ -132,8 +134,7 @@ function renderWordCard(entry: WordEntry) {
     }
   });
 
-  prioritySection.appendChild(deleteWordButton);
-  header.appendChild(prioritySection);
+  header.appendChild(deleteWordButton);
   card.appendChild(header);
 
   // ---- 例文リスト
