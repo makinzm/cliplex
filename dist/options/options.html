@@ -6,6 +6,7 @@
   <title>Cliplex</title>
   <link rel="icon" href="../ui/icon.png" type="image/png">
   <style>
+    /* フィルタとソートのセクション */
     #filterOption {
       display: flex;
       align-items: center;
@@ -71,67 +72,100 @@
       margin: 0;
     }
 
-    table {
-      width: 100%;
-      table-layout: fixed;
-      margin-bottom: 20px;
-      border-collapse: collapse;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 8px;
+    /* ---- ここからカード表示用のCSS ---- */
+    .word-card {
       border: 1px solid #ccc;
-      word-wrap: break-word;
-      vertical-align: top;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
     }
 
-    th {
-      background-color: #f2f2f2;
+    .word-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 10px;
     }
 
-    td.key-cell {
-      font-size: 1.2em; /* Key の文字サイズを大きく設定 */
-      font-weight: bold; /* Key を太字に設定 */
+    .word-header .priority-section {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
-    td.link-cell ul {
-      padding-left: 15px;
-      margin: 0;
+    .word-header .priority-select {
+      padding: 5px;
+      font-size: 0.9em;
     }
 
+    .example-list {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    .example-list li {
+      margin-bottom: 5px;
+    }
+
+    .word-links {
+      margin-top: 10px;
+    }
+
+    .word-links a {
+      margin-right: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .word-links a:hover {
+      text-decoration: underline;
+    }
+
+    .word-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .word-actions button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .word-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .note-section {
+      font-size: 0.9em;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    /* ページネーション */
     #pagination {
       display: flex;
       justify-content: center;
       margin-top: 10px;
       margin-bottom: 20px;
     }
-
     .pagination-button {
       margin: 0 5px;
       padding: 5px 10px;
       border: 1px solid #ccc;
       cursor: pointer;
     }
-
     .pagination-button:disabled {
       cursor: not-allowed;
       opacity: 0.5;
-    }
-
-    #linkLegend {
-      margin-bottom: 10px;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .edit-key-input {
-      width: 90%;
     }
 
     /* 新規単語追加フォーム */
@@ -150,84 +184,6 @@
       margin-right: 5px;
       margin-bottom: 10px;
     }
-
-  .word-card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 20px;
-    background-color: #f9f9f9;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-  }
-
-  .word-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2em;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-
-  .word-header .priority-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .word-header .priority-select {
-    padding: 5px;
-    font-size: 0.9em;
-  }
-
-  .example-list {
-    margin: 10px 0;
-    padding-left: 20px;
-  }
-
-  .example-list li {
-    margin-bottom: 5px;
-  }
-
-  .word-links {
-    margin-top: 10px;
-  }
-
-  .word-links a {
-    margin-right: 10px;
-    color: #007bff;
-    text-decoration: none;
-  }
-
-  .word-links a:hover {
-    text-decoration: underline;
-  }
-
-  .word-actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-  }
-
-  .word-actions button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .word-actions button:hover {
-    background-color: #0056b3;
-  }
-
-  .note-section {
-    font-size: 0.9em;
-    color: #555;
-    margin-bottom: 10px;
-  }
-
   </style>
 </head>
 <body>
@@ -252,6 +208,7 @@
     <button id="filterButton">フィルタ</button>
   </div>
 
+  <!-- ソート -->
   <div id="sortOption">
     <label>優先度ソート:
       <select id="prioritySort">
@@ -261,55 +218,8 @@
     </label>
   </div>
 
-
-  <div class="word-card">
-  <div class="word-header">
-    <span><b>hermetic</b></span>
-    <div class="priority-section">
-      <label for="priority-select">優先度:</label>
-      <select id="priority-select" class="priority-select">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3" selected>3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-      <button id="update-priority">変更</button>
-    </div>
-  </div>
-  <ul class="example-list">
-    <li>Example 1.</li>
-    <li>Example 2.</li>
-  </ul>
-  <div class="note-section">メモ: 古代の哲学者に関連する言葉。</div>
-  <div class="word-actions">
-    <button>例文を追加</button>
-    <button>例文を削除</button>
-  </div>
-  <div class="word-links">
-    <a href="#">Oxford</a>
-    <a href="#">Weblio</a>
-    <a href="#">Youglish</a>
-    <a href="#">Play Phrase</a>
-  </div>
-</div>
-
-  <table id="wordsTable">
-    <thead>
-      <tr>
-        <th style="width: 10%;">Key</th>
-        <th style="width: 5%;">📕</th>
-        <th style="width: 5%;">👂</th>
-        <th style="width: 5%;">🖊</th>
-        <th style="width: 15%;">例文</th>
-        <th style="width: 30%;">メモ</th>
-        <th style="width: 10%;">追加日</th>
-        <th style="width: 10%;">優先度</th>
-        <th style="width: 10%;">操作</th>
-      </tr>
-    </thead>
-    <tbody id="wordsTableBody"></tbody>
-  </table>
+  <!-- カードを表示するコンテナ -->
+  <div id="wordsContainer"></div>
 
   <!-- ページネーション -->
   <div id="pagination"></div>
@@ -373,6 +283,7 @@
     </div>
   </div>
 
+  <!-- TypeScript (module) -->
   <script type="module" src="options.js"></script>
 </body>
 </html>

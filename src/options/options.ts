@@ -10,17 +10,25 @@ type FilterOptions = {
 
 let currentData: WordEntry[] = [];
 
+/** フィルタやソートに使う要素を取得 */
 const dateFromEl = document.getElementById("dateFrom") as HTMLInputElement;
 const dateToEl = document.getElementById("dateTo") as HTMLInputElement;
 const filterButton = document.getElementById("filterButton") as HTMLButtonElement;
 const prioritySortEl = document.getElementById("prioritySort") as HTMLSelectElement;
-const tableBody = document.getElementById("wordsTableBody") as HTMLTableSectionElement;
+
+/** カードを格納するコンテナ */
+const wordsContainer = document.getElementById("wordsContainer") as HTMLDivElement;
+
+/** ページネーション関連 */
+let currentPage = 1;
+const rowsPerPage = 10; // 1ページあたりの表示数
+const paginationContainer = document.getElementById("pagination") as HTMLDivElement;
 
 /** ========== 単語一覧をロード & フィルタ & ソート ========== */
 async function loadData(filter: FilterOptions = {}) {
   let data = await db.getAll();
 
-  // フィルタリング
+  // 日付フィルタ
   if (filter.from) {
     data = data.filter((d) => new Date(d.addedDate) >= filter.from!);
   }
@@ -32,20 +40,23 @@ async function loadData(filter: FilterOptions = {}) {
   if (filter.prioritySort) {
     data.sort((a, b) => {
       if (filter.prioritySort === "asc") {
+        // 優先度 昇順
         if (a.priority === b.priority) {
+          // 同じ場合は追加日で昇順
           return (
             new Date(a.addedDate).getTime() - new Date(b.addedDate).getTime()
           );
         }
-        return a.priority - b.priority; // 優先度昇順
+        return a.priority - b.priority;
       } else {
-        // desc
+        // 優先度 降順
         if (a.priority === b.priority) {
+          // 同じ場合は追加日で降順
           return (
             new Date(b.addedDate).getTime() - new Date(a.addedDate).getTime()
           );
         }
-        return b.priority - a.priority; // 優先度降順
+        return b.priority - a.priority;
       }
     });
   } else {
@@ -61,12 +72,203 @@ async function loadData(filter: FilterOptions = {}) {
   }
 
   currentData = data;
-  currentPage = 1; // フィルタ後は1ページ目に戻す
-  renderTable();
+  currentPage = 1; // フィルタすると先頭ページに戻す
+  renderWords();
 }
 
-/** ========== フィルタ条件変更時の処理 ========== */
-prioritySortEl.addEventListener("change", () => {
+/** ========== カード描画 ========== */
+/**
+ * 1つのWordEntryをカードとして描画する
+ */
+function renderWordCard(entry: WordEntry) {
+  const card = document.createElement("div");
+  card.className = "word-card";
+
+  // ---- ヘッダー部分
+  const header = document.createElement("div");
+  header.className = "word-header";
+
+  // 単語タイトル
+  const wordTitle = document.createElement("span");
+  wordTitle.innerHTML = `<b>${entry.key}</b>`;
+  header.appendChild(wordTitle);
+
+  // 優先度セクション
+  const prioritySection = document.createElement("div");
+  prioritySection.className = "priority-section";
+
+  const priorityLabel = document.createElement("label");
+  priorityLabel.textContent = "優先度:";
+  prioritySection.appendChild(priorityLabel);
+
+  const prioritySelect = document.createElement("select");
+  prioritySelect.className = "priority-select";
+  [1, 2, 3, 4, 5].forEach((p) => {
+    const option = document.createElement("option");
+    option.value = String(p);
+    option.textContent = String(p);
+    if (p === entry.priority) {
+      option.selected = true;
+    }
+    prioritySelect.appendChild(option);
+  });
+  prioritySelect.addEventListener("change", async () => {
+    entry.priority = Number(prioritySelect.value);
+    await db.save(entry);
+    console.log("優先度が変更されました:", entry.key, entry.priority);
+    // 再読み込みしてソートし直す場合は必要に応じて:
+    // await loadData();
+  });
+
+  prioritySection.appendChild(prioritySelect);
+
+  const updatePriorityButton = document.createElement("button");
+  updatePriorityButton.textContent = "変更";
+  updatePriorityButton.addEventListener("click", async () => {
+    entry.priority = Number(prioritySelect.value);
+    await db.save(entry);
+    console.log("優先度が変更されました:", entry.priority);
+  });
+  prioritySection.appendChild(updatePriorityButton);
+
+  header.appendChild(prioritySection);
+  card.appendChild(header);
+
+  // ---- 例文リスト
+  const exampleList = document.createElement("ul");
+  exampleList.className = "example-list";
+
+  entry.examples.forEach((example, idx) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = example;
+
+    // 例文削除ボタン
+    const delBtn = document.createElement("button");
+    delBtn.textContent = "削除";
+    delBtn.style.marginLeft = "8px";
+    delBtn.addEventListener("click", async () => {
+      entry.examples.splice(idx, 1);
+      await db.save(entry);
+      renderWords(); // 再描画
+    });
+
+    listItem.appendChild(delBtn);
+    exampleList.appendChild(listItem);
+  });
+
+  // 例文追加ボタン
+  const addExampleBtn = document.createElement("button");
+  addExampleBtn.textContent = "追加";
+  addExampleBtn.addEventListener("click", async () => {
+    const newEx = prompt("新しい例文を入力してください:");
+    if (newEx) {
+      entry.examples.push(newEx);
+      await db.save(entry);
+      renderWords(); // 再描画
+    }
+  });
+
+  card.appendChild(exampleList);
+  card.appendChild(addExampleBtn);
+
+  // ---- メモセクション
+  const noteSection = document.createElement("div");
+  noteSection.className = "note-section";
+
+  // textareaで編集
+  const noteArea = document.createElement("textarea");
+  noteArea.rows = 2;
+  noteArea.cols = 30;
+  noteArea.value = entry.note || "";
+  noteArea.addEventListener("change", async () => {
+    entry.note = noteArea.value;
+    await db.save(entry);
+    console.log("メモが更新されました:", entry.key, entry.note);
+  });
+
+  noteSection.appendChild(noteArea);
+  card.appendChild(noteSection);
+
+  // ---- カード下部にリンク
+  const wordLinks = document.createElement("div");
+  wordLinks.className = "word-links";
+
+  const links = [
+    { name: "Oxford", url: `https://www.oxfordlearnersdictionaries.com/definition/english/${entry.key}` },
+    { name: "Weblio", url: `https://ejje.weblio.jp/content/${entry.key}` },
+    { name: "Youglish", url: `https://youglish.com/pronounce/${entry.key}/english` },
+    { name: "Play Phrase", url: `https://playphrase.me/#/search?q=${entry.key}` },
+  ];
+
+  links.forEach(({ name, url }) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.target = "_blank";
+    a.textContent = name;
+    wordLinks.appendChild(a);
+  });
+
+  card.appendChild(wordLinks);
+
+  // ---- 追加日など何か表示したければここに追記
+  const addedDateInfo = document.createElement("div");
+  addedDateInfo.style.fontSize = "0.8em";
+  addedDateInfo.style.marginTop = "5px";
+  addedDateInfo.textContent = `追加日: ${new Date(entry.addedDate).toLocaleString()}`;
+  card.appendChild(addedDateInfo);
+
+  wordsContainer.appendChild(card);
+}
+
+/** ========== ページネーション描画 ========== */
+function renderPagination() {
+  paginationContainer.innerHTML = "";
+  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+
+  // 「前へ」ボタン
+  const prevButton = document.createElement("button");
+  prevButton.textContent = "前へ";
+  prevButton.className = "pagination-button";
+  prevButton.disabled = currentPage === 1;
+  prevButton.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderWords();
+    }
+  });
+  paginationContainer.appendChild(prevButton);
+
+  // 「次へ」ボタン
+  const nextButton = document.createElement("button");
+  nextButton.textContent = "次へ";
+  nextButton.className = "pagination-button";
+  nextButton.disabled = currentPage === totalPages;
+  nextButton.addEventListener("click", () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderWords();
+    }
+  });
+  paginationContainer.appendChild(nextButton);
+}
+
+/** ========== currentData からカードを描画 ========== */
+function renderWords() {
+  wordsContainer.innerHTML = "";
+  const totalPages = Math.ceil(currentData.length / rowsPerPage);
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const pageData = currentData.slice(start, end);
+
+  pageData.forEach((entry) => {
+    renderWordCard(entry);
+  });
+
+  renderPagination();
+}
+
+/** ========== フィルタボタン ========== */
+filterButton.addEventListener("click", () => {
   const fromVal = dateFromEl.value ? new Date(dateFromEl.value) : undefined;
   const toVal = dateToEl.value ? new Date(dateToEl.value) : undefined;
   const priorityVal = prioritySortEl.value as "asc" | "desc" | "";
@@ -78,262 +280,8 @@ prioritySortEl.addEventListener("change", () => {
   });
 });
 
-/** ========== ページネーション ========== */
-let currentPage = 1;
-const rowsPerPage = 10; // 1ページあたりの表示数
-const paginationContainer = document.getElementById("pagination") as HTMLDivElement;
-
-function renderPagination() {
-  paginationContainer.innerHTML = "";
-  const totalPages = Math.ceil(currentData.length / rowsPerPage);
-
-  // 前へボタン
-  const prevButton = document.createElement("button");
-  prevButton.textContent = "前へ";
-  prevButton.className = "pagination-button";
-  prevButton.disabled = currentPage === 1;
-  prevButton.addEventListener("click", () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderTable();
-      renderPagination();
-    }
-  });
-  paginationContainer.appendChild(prevButton);
-
-  // 次へボタン
-  const nextButton = document.createElement("button");
-  nextButton.textContent = "次へ";
-  nextButton.className = "pagination-button";
-  nextButton.disabled = currentPage === totalPages;
-  nextButton.addEventListener("click", () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderTable();
-      renderPagination();
-    }
-  });
-  paginationContainer.appendChild(nextButton);
-}
-
-/** ========== テーブル描画 ========== */
-function renderTable() {
-  tableBody.innerHTML = "";
-  const totalPages = Math.ceil(currentData.length / rowsPerPage);
-  const start = (currentPage - 1) * rowsPerPage;
-  const end = start + rowsPerPage;
-  const pageData = currentData.slice(start, end);
-
-  for (const entry of pageData) {
-    const tr = document.createElement("tr");
-
-    // ---- リンク類の生成 ----
-    const youglishLink = `https://youglish.com/pronounce/${encodeURIComponent(entry.key)}/english`;
-    const playPhraseLink = `https://playphrase.me/#/search?q=${encodeURIComponent(entry.key)}`;
-    const oxfordLink = `https://www.oxfordlearnersdictionaries.com/definition/english/${encodeURIComponent(entry.key)}`;
-    const weblioLink = `https://ejje.weblio.jp/content/${encodeURIComponent(entry.key)}`;
-    const yourDictLink = `https://www.yourdictionary.com/${encodeURIComponent(entry.key)}`;
-    const hyperLink = `https://hypcol.marutank.net/?q=${encodeURIComponent(entry.key)}&d=f`;
-
-    // ---- Key セル (編集ボタン付き) ----
-    //   - デフォルトはテキスト表示 + 「編集」ボタン
-    //   - クリックで input に変わる
-    const keyCell = document.createElement("td");
-    keyCell.className = "key-cell";
-
-    const keySpan = document.createElement("span");
-    keySpan.textContent = entry.key;
-
-    const editKeyButton = document.createElement("button");
-    editKeyButton.textContent = "編集";
-    editKeyButton.addEventListener("click", () => {
-      // input に切り替え
-      const input = document.createElement("input");
-      input.type = "text";
-      input.value = entry.key;
-      input.className = "edit-key-input";
-
-      // 既存の keySpan, editKeyButton を隠す
-      keySpan.classList.add("hidden");
-      editKeyButton.classList.add("hidden");
-
-      keyCell.appendChild(input);
-      input.focus();
-
-      // 編集終了時の処理
-      const finishEdit = async () => {
-        const newKey = input.value.trim();
-        if (newKey && newKey !== entry.key) {
-          // DB上は key が主キーなので、 oldKey を消して newKey で保存
-          const oldKey = entry.key;
-          entry.key = newKey;
-          await db.delete(oldKey); // 古いキーを削除
-          await db.save(entry);    // 新しいキーでセーブ
-          console.log("キーを更新しました:", oldKey, "->", newKey);
-        }
-        // 入力フォームを消して元に戻す
-        keyCell.removeChild(input);
-        keySpan.textContent = entry.key;
-        keySpan.classList.remove("hidden");
-        editKeyButton.classList.remove("hidden");
-        renderTable(); // テーブル再描画
-      };
-
-      // Enterキー or フォーカス外れたら終了
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          finishEdit();
-        }
-      });
-      input.addEventListener("blur", () => {
-        finishEdit();
-      });
-    });
-
-    keyCell.appendChild(keySpan);
-    keyCell.appendChild(editKeyButton);
-
-    // ---- 辞書リンク
-    const dictCell = document.createElement("td");
-    dictCell.className = "link-cell";
-    dictCell.innerHTML = `
-      <ul>
-        <li><a href="${oxfordLink}" target="_blank">Ox.</a></li>
-        <li><a href="${weblioLink}" target="_blank">We.</a></li>
-      </ul>
-    `;
-
-    // ---- 発音リンク
-    const pronCell = document.createElement("td");
-    pronCell.className = "link-cell";
-    pronCell.innerHTML = `
-      <ul>
-        <li><a href="${youglishLink}" target="_blank">Youglish</a></li>
-        <li><a href="${playPhraseLink}" target="_blank">P.P.</a></li>
-      </ul>
-    `;
-
-    // ---- その他リンク
-    const otherLinkCell = document.createElement("td");
-    otherLinkCell.className = "link-cell";
-    otherLinkCell.innerHTML = `
-      <ul>
-        <li><a href="${yourDictLink}" target="_blank">Y.D.</a></li>
-        <li><a href="${hyperLink}" target="_blank">H.D.</a></li>
-      </ul>
-    `;
-
-    // ---- 例文セル (追加 & 削除ボタンで自動保存)
-    const exampleCell = document.createElement("td");
-    const exList = document.createElement("ul");
-
-    function renderExamples() {
-      exList.innerHTML = "";
-      entry.examples.forEach((ex, idx) => {
-        const li = document.createElement("li");
-        li.textContent = ex;
-
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "削除";
-        delBtn.style.marginLeft = "8px";
-        delBtn.addEventListener("click", async () => {
-          entry.examples.splice(idx, 1);
-          await db.save(entry);
-          renderTable(); // 再描画
-        });
-
-        li.appendChild(delBtn);
-        exList.appendChild(li);
-      });
-    }
-    renderExamples();
-
-    const addExBtn = document.createElement("button");
-    addExBtn.textContent = "追加";
-    addExBtn.addEventListener("click", async () => {
-      const newEx = prompt("新しい例文を入力してください:");
-      if (newEx) {
-        entry.examples.push(newEx);
-        await db.save(entry);
-        renderTable(); // 再描画
-      }
-    });
-
-    exampleCell.appendChild(exList);
-    exampleCell.appendChild(addExBtn);
-
-    // ---- メモセル (自動保存)
-    const noteCell = document.createElement("td");
-    const noteArea = document.createElement("textarea");
-    noteArea.className = "note-area";
-    noteArea.value = entry.note || "";
-    noteArea.rows = 2;
-    noteArea.cols = 30;
-
-    // note の変更を自動保存
-    noteArea.addEventListener("change", async () => {
-      entry.note = noteArea.value;
-      await db.save(entry);
-      console.log("メモを保存しました:", entry.note);
-    });
-
-    noteCell.appendChild(noteArea);
-
-    // ---- 追加日
-    const addedDateCell = document.createElement("td");
-    addedDateCell.textContent = new Date(entry.addedDate).toLocaleString();
-
-    // ---- 優先度 (自動保存)
-    const priorityCell = document.createElement("td");
-    const prioritySelect = document.createElement("select");
-    [1, 2, 3, 4, 5].forEach((p) => {
-      const opt = document.createElement("option");
-      opt.value = String(p);
-      opt.textContent = String(p);
-      if (p === entry.priority) {
-        opt.selected = true;
-      }
-      prioritySelect.appendChild(opt);
-    });
-
-    prioritySelect.addEventListener("change", async () => {
-      entry.priority = Number(prioritySelect.value);
-      await db.save(entry);
-      console.log("優先度を保存しました:", entry.priority);
-    });
-
-    priorityCell.appendChild(prioritySelect);
-
-    // ---- 操作セル (削除ボタンのみ)
-    const actionCell = document.createElement("td");
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "削除";
-    delBtn.addEventListener("click", async () => {
-      await db.delete(entry.key);
-      loadData(); // 再読み込み
-    });
-
-    actionCell.appendChild(delBtn);
-
-    // ---- 行にセルを追加 ----
-    tr.appendChild(keyCell);
-    tr.appendChild(dictCell);
-    tr.appendChild(pronCell);
-    tr.appendChild(otherLinkCell);
-    tr.appendChild(exampleCell);
-    tr.appendChild(noteCell);
-    tr.appendChild(addedDateCell);
-    tr.appendChild(priorityCell);
-    tr.appendChild(actionCell);
-
-    tableBody.appendChild(tr);
-  }
-
-  renderPagination();
-}
-
-/** ========== フィルタボタン ========== */
-filterButton.addEventListener("click", () => {
+/** ========== ソート切り替えイベント ========== */
+prioritySortEl.addEventListener("change", () => {
   const fromVal = dateFromEl.value ? new Date(dateFromEl.value) : undefined;
   const toVal = dateToEl.value ? new Date(dateToEl.value) : undefined;
   const priorityVal = prioritySortEl.value as "asc" | "desc" | "";
@@ -363,7 +311,7 @@ addNewWordButton.addEventListener("click", async () => {
   const examples = newWordExamplesEl.value
     .split(",")
     .map((ex) => ex.trim())
-    .filter((ex) => ex); // 空を除去
+    .filter((ex) => ex); // 空の要素を除外
 
   const note = newWordNoteEl.value || "";
   const priority = Number(newWordPriorityEl.value) || 3;
@@ -385,7 +333,7 @@ addNewWordButton.addEventListener("click", async () => {
   newWordNoteEl.value = "";
   newWordPriorityEl.value = "3";
 
-  // 再描画
+  // 再読み込み
   loadData();
 });
 
@@ -514,7 +462,7 @@ function initializeSettings() {
 initializeSettings();
 renderExcludedDomains();
 renderIncludedDomains();
-loadData();
+loadData(); // データ読込
 loadDomainFilterMode();
 setupDomainFilterModeListeners();
 
