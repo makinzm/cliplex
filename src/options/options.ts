@@ -160,7 +160,8 @@ function renderWordCard(entry: WordEntry) {
 
   // 例文追加ボタン
   const addExampleBtn = document.createElement("button");
-  addExampleBtn.textContent = "追加";
+  addExampleBtn.className = "add-example-button";
+  addExampleBtn.textContent = "例文を追加";
   addExampleBtn.addEventListener("click", async () => {
     const newEx = prompt("新しい例文を入力してください:");
     if (newEx) {
