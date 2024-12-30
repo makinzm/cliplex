@@ -49,9 +49,23 @@ ClipLexは、ウェブ上で選択したテキストを英単語として保存�
 
 ## 📷 スクリーンショット
 
-オプション画面で単語の復習や学習を行うことができます:
+### 実際の仕様例
+
+ClipLexを使用して、文字列を選択すると下記のようなポップアップが表示されます（不具合で表示されない場合があるため、その場合は選択後に右クリックを行ってみてください）。
+
 <p align="center">
-  <img src="docs/screenshots/cliplex_options_v1.0.0.png" alt="Usage example" width="600">
+  <img src="docs/screenshots/cliplex_browser_v1.0.1.png" alt="Usage example" width="600">
+</p>
+
+水色のボタンを押すことで新規の用語として保存ができ、
+ピンク色のボタンを押すことでその範囲に含まれる用語に対して、現在選択中の例文を追加することができます。
+
+### オプション画面
+
+オプション画面で単語の復習や学習を行うことができます
+
+<p align="center">
+  <img src="docs/screenshots/cliplex_option_v1.0.1.png" alt="Usage example" width="600">
 </p>
 
 ## 🔧 設定オプション
