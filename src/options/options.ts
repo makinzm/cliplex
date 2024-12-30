@@ -283,6 +283,8 @@ function renderWordCard(entry: WordEntry) {
     { name: "Weblio", url: `https://ejje.weblio.jp/content/${entry.key}` },
     { name: "Youglish", url: `https://youglish.com/pronounce/${entry.key}/english` },
     { name: "Play Phrase", url: `https://playphrase.me/#/search?q=${entry.key}` },
+    { name: "Hyper Collection", url: `https://hypcol.marutank.net/?q=${entry.key}&d=f` },
+    { name: "Your Dictionary", url: `https://www.yourdictionary.com/${entry.key}` },
   ];
 
   links.forEach(({ name, url }) => {
