@@ -136,8 +136,7 @@ async function getAllWordEntries(): Promise<WordEntry[]> {
     sentenceButton.style.cursor = "pointer";
 
     const sentenceImg = document.createElement("img");
-    sentenceImg.src = chrome.runtime.getURL("ui/images.png"); // 新しいアイコン
-    sentenceImg.alt = "画像＋sentence";
+    sentenceImg.src = chrome.runtime.getURL("ui/sentence.png"); // 新しいアイコン
     sentenceImg.style.width = "24px";
     sentenceImg.style.height = "24px";
     sentenceButton.appendChild(sentenceImg);
@@ -197,7 +196,6 @@ async function getAllWordEntries(): Promise<WordEntry[]> {
           console.log("新規ワードを追加:", newEntry);
         }
 
-        alert("例文追加処理が完了しました。");
       } catch (err) {
         console.error("画像＋sentence処理中にエラー:", err);
         alert("画像＋sentence処理中にエラーが発生しました。");
