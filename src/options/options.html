@@ -223,6 +223,90 @@
       margin-right: 5px;
       margin-bottom: 10px;
     }
+
+    /* 共通のカードスタイル */
+    .section-card {
+      border: 2px solid #ddd; /* 明確な枠線 */
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-card h2 {
+      font-size: 1.5em;
+      color: #333;
+      border-bottom: 2px solid #ccc; /* Fix感を持たせる線 */
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* フォーム要素のスタイル */
+    .section-card input[type="text"],
+    .section-card textarea,
+    .section-card select {
+      font-size: 1em;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .section-card button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .section-card button:hover {
+      background-color: #0056b3;
+    }
+
+    .section-card ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    .section-card li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .section-card li:last-child {
+      border-bottom: none;
+    }
+
+    /* Fix: ページネーションのスタイル */
+    #pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination-button {
+      padding: 8px 15px;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    .pagination-button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -230,6 +314,33 @@
     <img src="../ui/icon.png" alt="Cliplex Icon">
     <h1>Cliplex</h1>
   </header>
+  
+  <div class="word-card" id="addWordSection">
+    <div class="word-header">
+      <span class="word-title">
+        <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
+      </span>
+      <div class="priority-section">
+        <label>優先度:</label>
+        <select id="newWordPriority">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3" selected>3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+    </div>
+    <div class="note-section">
+      <textarea id="newWordNote" placeholder="メモ" rows="2"></textarea>
+    </div>
+    <div class="example-list">
+      <input type="text" id="newWordExamples" placeholder="例文 (カンマ区切りで入力)" />
+    </div>
+    <div class="word-actions">
+      <button id="addNewWordButton">追加</button>
+    </div>
+  </div>
 
   <!-- リンク記号の説明 -->
   <div id="linkLegend">
@@ -263,8 +374,8 @@
   <!-- ページネーション -->
   <div id="pagination"></div>
 
-  <h2>ドメインフィルターモード</h2>
-  <div>
+  <h2>ドメインフィルタ設定</h2>
+  <div id="section-card">
     <label>
       <input type="radio" name="domainFilterMode" value="exclude" id="radioExclude" />
       Excludeモード (ブラックリスト: すべてのドメインで拡張機能が機能しますが、指定したドメインのみ機能しないようにします)
@@ -278,7 +389,7 @@
   <!-- Excludeモード設定 -->
   <div id="excludeSettings" style="display: none;">
     <h2>ドメインブロック設定</h2>
-    <div>
+    <div id="section-card">
       <input type="text" id="excludedDomainInput" placeholder="example.com" />
       <button id="addExcludedDomainButton">ドメインを追加</button>
     </div>
@@ -288,38 +399,11 @@
   <!-- Includeモード設定 -->
   <div id="includeSettings" style="display: none;">
     <h2>ドメイン限定設定 (Included)</h2>
-    <div>
+    <div id="section-card">
       <input type="text" id="includedDomainInput" placeholder="example.org" />
       <button id="addIncludedDomainButton">ドメインを追加</button>
     </div>
     <ul id="includedDomainList"></ul>
-  </div>
-
-  <!-- 新規単語追加フォーム -->
-  <div id="addWordSection">
-    <h2>新規単語追加</h2>
-    <div>
-      <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
-    </div>
-    <div>
-      <label>例文 (カンマ区切り): </label>
-      <input type="text" id="newWordExamples" placeholder="例) Hello world, This is a pen." />
-    </div>
-    <div>
-      <label>メモ: </label>
-      <textarea id="newWordNote" rows="2" cols="30"></textarea>
-    </div>
-    <div>
-      <label>優先度: </label>
-      <select id="newWordPriority">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3" selected>3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-      <button id="addNewWordButton">追加</button>
-    </div>
   </div>
 
   <!-- TypeScript (module) -->
