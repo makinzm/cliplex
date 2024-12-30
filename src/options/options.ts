@@ -144,17 +144,34 @@ function renderWordCard(entry: WordEntry) {
     const listItem = document.createElement("li");
     listItem.textContent = example;
 
+    // 編集ボタン
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "編集";
+    editBtn.style.marginLeft = "8px";
+    editBtn.addEventListener("click", async () => {
+      const newEx = prompt("新しい例文を入力してください:", example);
+      if (newEx !== null && newEx.trim() !== "") {
+        entry.examples[idx] = newEx.trim();
+        await db.save(entry);
+        renderWords(); // 再描画
+      }
+    });
+
     // 例文削除ボタン
     const delBtn = document.createElement("button");
     delBtn.textContent = "削除";
     delBtn.style.marginLeft = "8px";
     delBtn.addEventListener("click", async () => {
+      if (!confirm("本当に削除しますか?")) {
+        return;
+      }
       entry.examples.splice(idx, 1);
       await db.save(entry);
       renderWords(); // 再描画
     });
 
     listItem.appendChild(delBtn);
+    listItem.appendChild(editBtn);
     exampleList.appendChild(listItem);
   });
 
