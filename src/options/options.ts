@@ -65,6 +65,19 @@ async function loadData(filter: FilterOptions = {}) {
   renderTable();
 }
 
+/** ========== フィルタ条件変更時の処理 ========== */
+prioritySortEl.addEventListener("change", () => {
+  const fromVal = dateFromEl.value ? new Date(dateFromEl.value) : undefined;
+  const toVal = dateToEl.value ? new Date(dateToEl.value) : undefined;
+  const priorityVal = prioritySortEl.value as "asc" | "desc" | "";
+
+  loadData({
+    from: fromVal,
+    to: toVal,
+    prioritySort: priorityVal,
+  });
+});
+
 /** ========== ページネーション ========== */
 let currentPage = 1;
 const rowsPerPage = 10; // 1ページあたりの表示数
