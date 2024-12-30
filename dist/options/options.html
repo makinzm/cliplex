@@ -117,6 +117,37 @@
     <h1>Cliplex</h1>
   </header>
 
+  <!-- リンク記号の説明 -->
+  <div id="linkLegend">
+    <p>
+      📕: 辞書系 (Oxford, Weblio) |
+      👂: 動画系 (Youglish, Play Phrase) |
+      🖊: その他 (Your Dictionary, Hyper Collection)
+    </p>
+  </div>
+
+  <!-- 単語一覧 -->
+  <h2>単語一覧</h2>
+  <table id="wordsTable">
+    <thead>
+      <tr>
+        <th style="width: 10%;">Key</th>
+        <th style="width: 5%;">📕</th>
+        <th style="width: 5%;">👂</th>
+        <th style="width: 5%;">🖊</th>
+        <th style="width: 15%;">例文</th>
+        <th style="width: 30%;">メモ</th>
+        <th style="width: 10%;">追加日</th>
+        <th style="width: 10%;">優先度</th>
+        <th style="width: 10%;">操作</th>
+      </tr>
+    </thead>
+    <tbody id="wordsTableBody"></tbody>
+  </table>
+
+  <!-- ページネーション -->
+  <div id="pagination"></div>
+
   <h2>ドメインフィルターモード</h2>
   <div>
     <label>
@@ -165,36 +196,7 @@
     </label>
   </div>
 
-  <!-- リンク記号の説明 -->
-  <div id="linkLegend">
-    <p>
-      📕: 辞書系 (Oxford, Weblio) |
-      👂: 動画系 (Youglish, Play Phrase) |
-      🖊: その他 (Your Dictionary, Hyper Collection)
-    </p>
-  </div>
 
-  <!-- 単語一覧 -->
-  <h2>単語一覧</h2>
-  <table id="wordsTable">
-    <thead>
-      <tr>
-        <th style="width: 10%;">Key</th>
-        <th style="width: 5%;">📕</th>
-        <th style="width: 5%;">👂</th>
-        <th style="width: 5%;">🖊</th>
-        <th style="width: 15%;">例文</th>
-        <th style="width: 30%;">メモ</th>
-        <th style="width: 10%;">追加日</th>
-        <th style="width: 10%;">優先度</th>
-        <th style="width: 10%;">操作</th>
-      </tr>
-    </thead>
-    <tbody id="wordsTableBody"></tbody>
-  </table>
-
-  <!-- ページネーション -->
-  <div id="pagination"></div>
 
   <!-- 新規単語追加フォーム -->
   <div id="addWordSection">
