@@ -6,10 +6,52 @@
   <title>Cliplex</title>
   <link rel="icon" href="../ui/icon.png" type="image/png">
   <style>
+    /* フィルタとソートのセクション */
+    #filterOption {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px; /* 要素間のスペースを追加 */
+      width: 100%; /* 横幅を100%に広げる */
+      margin: 20px auto; /* 上下に余白を追加 */
+      padding: 10px; /* 内側に余白を追加 */
+      box-sizing: border-box; /* パディングを含めて幅を計算 */
+      background-color: #f9f9f9; /* 背景色をつけて視認性を向上 */
+      border: 1px solid #ccc; /* 枠線を追加 */
+      border-radius: 8px; /* 枠線の角を丸くする */
+    }
+    #filterOption label,
+    #filterOption button {
+      font-size: 1.2em; /* 文字サイズを少し大きくする */
+    }
+    #filterOption input {
+      padding: 5px;
+      font-size: 1em; /* 入力欄の文字サイズを調整 */
+      width: 150px; /* 入力欄の幅を指定 */
+    }
+
+    #sortOption {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      margin: 20px auto;
+      padding: 10px;
+      box-sizing: border-box;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    #sortOption label,
+    #sortOption select {
+      font-size: 1.2em;
+    }
+
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
+      margin: 0 auto;
+      padding: 20px;
     }
 
     header {
@@ -30,52 +72,291 @@
       margin: 0;
     }
 
-    table {
-      width: 100%;
-      table-layout: fixed;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 8px;
+    /* ---- ここからカード表示用のCSS ---- */
+    .word-card {
       border: 1px solid #ccc;
-      word-wrap: break-word;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+      position: relative;
+      padding-bottom: 40px;
     }
 
-    th {
-      background-color: #f2f2f2;
+    .word-header {
+      display: flex;
+      justify-content: space-between; /* 要素を左右に配置 */
+      align-items: center; /* 縦中央揃え */
+      margin-bottom: 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc; /* 下線を追加して分かりやすく */
     }
 
-    td.key-cell {
-      font-size: 1.2em; /* Key の文字サイズを大きく設定 */
-      font-weight: bold; /* Key を太字に設定 */
+    .priority-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1em;
     }
 
-    td.link-cell ul {
-      padding-left: 15px;
+    .word-title {
+      font-size: 1.2em; /* 文字を少し大きく */
+      font-weight: bold; /* 太字にする */
+      margin-right: auto; /* 左詰め */
+      margin-left: 10px;
     }
 
+    .delete-word-button {
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .delete-word-button:hover {
+      background-color: #d64545;
+    }
+
+    .example-list {
+      margin: 10px 0;
+      padding-left: 20px;
+    }
+
+    .example-list li {
+      margin-bottom: 5px;
+      font-size: 1.2em;
+    }
+
+    .word-links {
+      margin-top: 10px;
+    }
+
+    .word-links a {
+      margin-right: 10px;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    .word-links a:hover {
+      text-decoration: underline;
+    }
+
+    .word-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .word-actions button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .word-actions button:hover {
+      background-color: #0056b3;
+    }
+
+    .add-example-button {
+      background-color: #0F52BA;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      position: absolute;
+      left: 10px;
+      bottom: 10px;
+    }
+
+    .note-section {
+      max-width: 500px; /* 横幅を制限 */
+      margin-top: 10px;
+      padding: 10px;
+      border: 1px solid #ccc; /* 枠線を追加 */
+      border-radius: 5px; /* 角を丸く */
+      background-color: #f9f9f9; /* 背景色を指定 */
+    }
+    .note-section textarea {
+      width: 100%; /* 横幅いっぱい */
+      resize: none; /* サイズ変更禁止 */
+      font-size: 1em; /* 適切な文字サイズ */
+    }
+
+    /* ページネーション */
     #pagination {
       display: flex;
       justify-content: center;
       margin-top: 10px;
+      margin-bottom: 20px;
     }
-
     .pagination-button {
       margin: 0 5px;
       padding: 5px 10px;
       border: 1px solid #ccc;
       cursor: pointer;
     }
-
     .pagination-button:disabled {
       cursor: not-allowed;
       opacity: 0.5;
     }
 
-    #linkLegend {
+    /* 新規単語追加フォーム */
+    #addWordSection {
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+    }
+
+    #addWordSection h2 {
+      margin-top: 0;
+    }
+
+    #addWordSection input,
+    #addWordSection textarea,
+    #addWordSection select {
+      margin-right: 5px;
       margin-bottom: 10px;
     }
+
+    /* 共通のカードスタイル */
+    .section-card {
+      border: 2px solid #ddd; /* 明確な枠線 */
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-card h2 {
+      font-size: 1.5em;
+      color: #333;
+      border-bottom: 2px solid #ccc; /* Fix感を持たせる線 */
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+
+    /* フォーム要素のスタイル */
+    .section-card input[type="text"],
+    .section-card textarea,
+    .section-card select {
+      font-size: 1em;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    .section-card button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+    }
+
+    .section-card button:hover {
+      background-color: #0056b3;
+    }
+
+    .section-card ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 0;
+    }
+
+    .section-card li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    .section-card li:last-child {
+      border-bottom: none;
+    }
+
+    /* Fix: ページネーションのスタイル */
+    #pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pagination-button {
+      padding: 8px 15px;
+      border-radius: 5px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+
+    .pagination-button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    /* モーダル全体の背景 */
+    .modal-overlay {
+      display: none; /* 初期状態では非表示 */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* モーダル本体 */
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: -15px; /* モーダルの外側に配置 */
+      right: -15px; /* モーダルの右外側 */
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 50%; /* 完全な丸形にする */
+      padding: 8px;
+      cursor: pointer;
+      font-size: 1.2em; /* ボタンの文字サイズを調整 */
+      width: 35px; /* ボタンの幅を調整 */
+      height: 35px; /* ボタンの高さを調整 */
+      display: flex; /* 中央揃え */
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 軽い影を追加して立体感を */
+    }
+
+  
+    .modal-close:hover {
+      background: #d64545;
+    }
+
   </style>
 </head>
 <body>
@@ -84,8 +365,78 @@
     <h1>Cliplex</h1>
   </header>
 
-  <h2>ドメインフィルターモード</h2>
-  <div>
+  <!-- 新規単語追加ボタン -->
+  <div class="word-actions">
+    <button id="openModalButton">新規単語追加</button>
+  </div>
+
+  <!-- モーダルウィンドウ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModalButton">x</button>
+      <div class="word-card">
+        <div class="word-header">
+          <span class="word-title">
+            <input type="text" id="newWordKey" placeholder="新しい単語 (必須)" />
+          </span>
+          <div class="priority-section">
+            <label>優先度:</label>
+            <select id="newWordPriority">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3" selected>3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+        </div>
+        <div class="note-section">
+          <textarea id="newWordNote" placeholder="メモ" rows="2"></textarea>
+        </div>
+        <div class="example-list">
+          <input type="text" id="newWordExamples" placeholder="例文 (カンマ区切りで入力)" />
+        </div>
+        <div class="word-actions">
+          <button id="addNewWordButton">追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- リンク記号の説明 -->
+  <div id="linkLegend">
+    <p>
+      📕: 辞書系 (Oxford, Weblio) |
+      👂: 動画系 (Youglish, Play Phrase) |
+      🖊: その他 (Your Dictionary, Hyper Collection)
+    </p>
+  </div>
+
+  <!-- フィルタ -->
+  <div id="filterOption">
+    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
+    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
+    <button id="filterButton">フィルタ</button>
+  </div>
+
+  <!-- ソート -->
+  <div id="sortOption">
+    <label>優先度ソート:
+      <select id="prioritySort">
+        <option value="asc">昇順</option>
+        <option value="desc" selected>降順</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- カードを表示するコンテナ -->
+  <div id="wordsContainer"></div>
+
+  <!-- ページネーション -->
+  <div id="pagination"></div>
+
+  <h2>ドメインフィルタ設定</h2>
+  <div id="section-card">
     <label>
       <input type="radio" name="domainFilterMode" value="exclude" id="radioExclude" />
       Excludeモード (ブラックリスト: すべてのドメインで拡張機能が機能しますが、指定したドメインのみ機能しないようにします)
@@ -99,7 +450,7 @@
   <!-- Excludeモード設定 -->
   <div id="excludeSettings" style="display: none;">
     <h2>ドメインブロック設定</h2>
-    <div>
+    <div id="section-card">
       <input type="text" id="excludedDomainInput" placeholder="example.com" />
       <button id="addExcludedDomainButton">ドメインを追加</button>
     </div>
@@ -109,61 +460,14 @@
   <!-- Includeモード設定 -->
   <div id="includeSettings" style="display: none;">
     <h2>ドメイン限定設定 (Included)</h2>
-    <div>
+    <div id="section-card">
       <input type="text" id="includedDomainInput" placeholder="example.org" />
       <button id="addIncludedDomainButton">ドメインを追加</button>
     </div>
     <ul id="includedDomainList"></ul>
   </div>
 
-  <!-- フィルタ -->
-  <div>
-    <label>日付範囲(開始): <input type="date" id="dateFrom" /></label>
-    <label>日付範囲(終了): <input type="date" id="dateTo" /></label>
-    <button id="filterButton">フィルタ</button>
-  </div>
-
-  <div>
-    <label>優先度ソート:
-      <select id="prioritySort">
-        <option value="">なし</option>
-        <option value="asc">昇順</option>
-        <option value="desc">降順</option>
-      </select>
-    </label>
-  </div>
-
-  <!-- リンク記号の説明 -->
-  <div id="linkLegend">
-    <p>
-      📕: 辞書系 (Oxford, Weblio) |
-      👂: 動画系 (Youglish, Play Phrase) |
-      🖊: その他 (Your Dictionary, Hyper Collection)
-    </p>
-  </div>
-
-  <!-- 単語一覧 -->
-  <h2>単語一覧</h2>
-  <table id="wordsTable" border="1" style="border-collapse: collapse;">
-    <thead>
-      <tr>
-        <th style="width: 10%;">Key</th>
-        <th style="width: 5%;">📕</th>
-        <th style="width: 5%;">👂</th>
-        <th style="width: 5%;">🖊</th>
-        <th style="width: 15%;">例文</th>
-        <th style="width: 30%;">メモ</th>
-        <th style="width: 10%;">追加日</th>
-        <th style="width: 10%;">優先度</th>
-        <th style="width: 10%;">操作</th>
-      </tr>
-    </thead>
-    <tbody id="wordsTableBody"></tbody>
-  </table>
-
-  <!-- ページネーション -->
-  <div id="pagination"></div>
-
+  <!-- TypeScript (module) -->
   <script type="module" src="options.js"></script>
 </body>
 </html>
