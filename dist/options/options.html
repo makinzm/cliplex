@@ -150,6 +150,84 @@
       margin-right: 5px;
       margin-bottom: 10px;
     }
+
+  .word-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .word-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .word-header .priority-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .word-header .priority-select {
+    padding: 5px;
+    font-size: 0.9em;
+  }
+
+  .example-list {
+    margin: 10px 0;
+    padding-left: 20px;
+  }
+
+  .example-list li {
+    margin-bottom: 5px;
+  }
+
+  .word-links {
+    margin-top: 10px;
+  }
+
+  .word-links a {
+    margin-right: 10px;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  .word-links a:hover {
+    text-decoration: underline;
+  }
+
+  .word-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+
+  .word-actions button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .word-actions button:hover {
+    background-color: #0056b3;
+  }
+
+  .note-section {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 10px;
+  }
+
   </style>
 </head>
 <body>
@@ -184,8 +262,38 @@
   </div>
 
 
-  <!-- 単語一覧 -->
-  <h2>単語一覧</h2>
+  <div class="word-card">
+  <div class="word-header">
+    <span><b>hermetic</b></span>
+    <div class="priority-section">
+      <label for="priority-select">優先度:</label>
+      <select id="priority-select" class="priority-select">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3" selected>3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+      <button id="update-priority">変更</button>
+    </div>
+  </div>
+  <ul class="example-list">
+    <li>Example 1.</li>
+    <li>Example 2.</li>
+  </ul>
+  <div class="note-section">メモ: 古代の哲学者に関連する言葉。</div>
+  <div class="word-actions">
+    <button>例文を追加</button>
+    <button>例文を削除</button>
+  </div>
+  <div class="word-links">
+    <a href="#">Oxford</a>
+    <a href="#">Weblio</a>
+    <a href="#">Youglish</a>
+    <a href="#">Play Phrase</a>
+  </div>
+</div>
+
   <table id="wordsTable">
     <thead>
       <tr>
