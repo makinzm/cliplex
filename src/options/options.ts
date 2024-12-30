@@ -122,15 +122,17 @@ function renderWordCard(entry: WordEntry) {
 
   prioritySection.appendChild(prioritySelect);
 
-  const updatePriorityButton = document.createElement("button");
-  updatePriorityButton.textContent = "変更";
-  updatePriorityButton.addEventListener("click", async () => {
-    entry.priority = Number(prioritySelect.value);
-    await db.save(entry);
-    console.log("優先度が変更されました:", entry.priority);
+  const deleteWordButton = document.createElement("button");
+  deleteWordButton.textContent = "削除";
+  deleteWordButton.className = "delete-word-button";
+  deleteWordButton.addEventListener("click", async () => {
+    if (confirm("本当に削除しますか?")) {
+      await db.delete(entry.key);
+      loadData(); // 再読み込み
+    }
   });
-  prioritySection.appendChild(updatePriorityButton);
 
+  prioritySection.appendChild(deleteWordButton);
   header.appendChild(prioritySection);
   card.appendChild(header);
 
