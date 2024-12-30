@@ -21,7 +21,7 @@ const wordsContainer = document.getElementById("wordsContainer") as HTMLDivEleme
 
 /** ページネーション関連 */
 let currentPage = 1;
-const rowsPerPage = 10; // 1ページあたりの表示数
+const rowsPerPage = 5; // 1ページあたりの表示数
 const paginationContainer = document.getElementById("pagination") as HTMLDivElement;
 
 /** ========== 単語一覧をロード & フィルタ & ソート ========== */
