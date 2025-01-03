@@ -3,8 +3,7 @@
   "name": "ClipLex",
   "version": "1.0.0",
   "description": "Improve your English vocabulary with ClipLex",
-  "permissions": ["storage"],
-  "host_permissions": ["<all_urls>"],
+  "permissions": ["storage", "activeTab", "scripting"],
   "options_page": "options/options.html",
   "content_scripts": [
     {
