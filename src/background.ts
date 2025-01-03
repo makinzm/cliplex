@@ -2,9 +2,22 @@ import { LocalDatabase } from "./database";
 
 chrome.action.onClicked.addListener((tab) => {
   if (tab.id && tab.url) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["content_script.js"], // 動的に注入するスクリプト
+    chrome.tabs.sendMessage(tab.id, { type: "CHECK_SCRIPT" }, (response) => {
+      if (chrome.runtime.lastError || !response || !response.injected) {
+        // スクリプトが未注入の場合、注入する
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id! },
+          files: ["content_script.js"],
+        })
+        .then(() => {
+          console.log("Content script injected successfully.");
+        })
+        .catch(err => {
+          console.error("Failed to inject content script:", err);
+        });
+      } else {
+        console.log("Content script already injected.");
+      }
     });
   }
 });

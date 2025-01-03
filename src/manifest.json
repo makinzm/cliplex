@@ -5,13 +5,6 @@
   "description": "Improve your English vocabulary with ClipLex",
   "permissions": ["storage", "activeTab", "scripting"],
   "options_page": "options/options.html",
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content_script.js"],
-      "run_at": "document_idle"
-    }
-  ],
   "background": {
     "service_worker": "background.js"
   },

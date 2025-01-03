@@ -1,5 +1,11 @@
 import { checkDomainFilterMode } from "./content_script_helper";
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "CHECK_SCRIPT") {
+    sendResponse({ injected: true });
+  }
+});
+
 // 既存: background.ts と通信して save するための Promiseラッパー関数
 async function saveEntryToBackground(entry: WordEntry): Promise<void> {
   return new Promise<void>((resolve, reject) => {
