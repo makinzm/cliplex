@@ -325,6 +325,13 @@ function renderPagination() {
   });
   paginationContainer.appendChild(prevButton);
 
+
+  // ページ番号
+  const pageNumbers = document.createElement("span");
+  pageNumbers.textContent = `${currentPage} / ${totalPages}`;
+  pageNumbers.style.margin = "0 5px";
+  paginationContainer.appendChild(pageNumbers);
+
   // 「次へ」ボタン
   const nextButton = document.createElement("button");
   nextButton.textContent = "次へ";
