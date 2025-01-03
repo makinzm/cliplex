@@ -1,14 +1,5 @@
 import { LocalDatabase } from "./database";
 
-chrome.action.onClicked.addListener((tab) => {
-  if (tab.id && tab.url) {
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      files: ["content_script.js"], // 動的に注入するスクリプト
-    });
-  }
-});
-
 const db = new LocalDatabase();
 
 console.log("Background script started.");
