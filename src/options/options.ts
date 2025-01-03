@@ -21,7 +21,7 @@ const wordsContainer = document.getElementById("wordsContainer") as HTMLDivEleme
 
 /** ページネーション関連 */
 let currentPage = 1;
-const rowsPerPage = 5; // 1ページあたりの表示数
+const rowsPerPage = 2; // 1ページあたりの表示数
 const paginationContainer = document.getElementById("pagination") as HTMLDivElement;
 
 /** ========== 単語一覧をロード & フィルタ & ソート ========== */
@@ -324,6 +324,13 @@ function renderPagination() {
     }
   });
   paginationContainer.appendChild(prevButton);
+
+
+  // ページ番号
+  const pageNumbers = document.createElement("span");
+  pageNumbers.textContent = `${currentPage} / ${totalPages}`;
+  pageNumbers.style.margin = "0 5px";
+  paginationContainer.appendChild(pageNumbers);
 
   // 「次へ」ボタン
   const nextButton = document.createElement("button");
